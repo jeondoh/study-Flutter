@@ -10,9 +10,41 @@ class MainHomePage extends StatelessWidget {
           centerTitle: true,
           title: const Text("Flutter AppBar")
       ),
-      body: Container(
-        margin: const EdgeInsets.symmetric(vertical: 50, horizontal: 100),
-        color: Colors.yellowAccent,
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: (){},
+            onLongPress: () {
+              print("onLongPress");
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blue,
+              onPrimary: Colors.white,
+            ),
+            child: const Text("ElevatedButton")
+          ),
+          OutlinedButton(
+            onPressed: (){},
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Colors.orange)
+            ),
+            child: const Text("OutlinedButton")
+          ),
+          TextButton(
+            onPressed: (){},
+            child: const Text("TextButton")
+          ),
+          GestureDetector(
+            onTap: (){},
+            onTapDown: (detail){
+              print('onTapDown ${detail.kind} | ${detail.globalPosition}');
+            },
+            child: Container(
+              color: Colors.yellow,
+              height: 100,
+            )
+          ),
+        ],
       ),
     );
   }
