@@ -6,8 +6,22 @@ class MainHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Main Home Page")),
-      body: const Center(child: Text('center'),),
+      appBar: AppBar(
+          centerTitle: true, title: const Text("Flutter AppBar")
+      ),
+      body: Container(
+        color: Colors.yellow,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 50,
+        ),
+        margin: const EdgeInsets.symmetric(
+          horizontal: 50,
+          vertical: 50,
+        ),
+        child: const Text('My Home Page'),
+      ),
     );
   }
 }
