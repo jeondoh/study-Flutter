@@ -7,20 +7,32 @@ class MainHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          centerTitle: true, title: const Text("Flutter AppBar")
+          centerTitle: true,
+          title: const Text("Flutter AppBar")
       ),
-      body: Container(
-        color: Colors.yellow,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 50,
-        ),
-        margin: const EdgeInsets.symmetric(
-          horizontal: 50,
-          vertical: 50,
-        ),
-        child: const Text('My Home Page'),
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            color: Colors.yellow,
+            width: 100,
+            height: 20,
+            child: const Text('My Home Page1', style: TextStyle(fontSize: 24),),
+          ),
+          Container(
+            color: Colors.green,
+            width: 100,
+            height: 50,
+            child: const Text('My Home Page2', style: TextStyle(fontSize: 24),),
+          ),
+          Container(
+            color: Colors.deepOrangeAccent,
+            width: 100,
+            height: 100,
+            child: const Text('My Home Page3', style: TextStyle(fontSize: 24),),
+          ),
+        ],
       ),
     );
   }
