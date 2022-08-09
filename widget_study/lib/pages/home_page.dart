@@ -17,6 +17,17 @@ class _MainHomePageState extends State<MainHomePage> {
           centerTitle: true,
           title: const Text("Flutter AppBar")
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          setState(() {
+            count++;
+          });
+        },
+        child: const Icon(
+          Icons.plus_one,
+          color: Colors.white
+        ),
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
