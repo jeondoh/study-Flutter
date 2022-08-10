@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:widget_study/main.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -27,11 +31,48 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
-            onPressed:() {
-              _showToast();
-            },
-            child: const Text('btn')
-          ),
+              onPressed: () {
+                _showToast();
+              },
+              child: const Text('btn')),
+          const Center(child: Text('hi')),
+          ElevatedButton(
+              onPressed: () async {
+                final notification = flutterLocalNotificationsPlugin;
+                const android = AndroidNotificationDetails(
+                  '0',
+                  '알림 테스트',
+                  channelDescription: '알림 테스트 바디 부분',
+                  importance: Importance.max,
+                  priority: Priority.max,
+                );
+                const ios = IOSNotificationDetails();
+                const detail = NotificationDetails(
+                  android: android,
+                  iOS: ios,
+                );
+
+                final permission = Platform.isAndroid
+                    ? true
+                    : await notification
+                            .resolvePlatformSpecificImplementation<
+                                IOSFlutterLocalNotificationsPlugin>()
+                            ?.requestPermissions(
+                                alert: true, badge: true, sound: true) ??
+                        false;
+
+                if(!permission){
+                  return;
+                }
+
+                await flutterLocalNotificationsPlugin.show(
+                  0,
+                  'plain title',
+                  'plain body',
+                  detail,
+                );
+              },
+              child: const Text('add Alarms')),
           const Center(child: Text('hi'))
         ],
       ),
@@ -57,7 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-
     fToast.showToast(
       child: toast,
       gravity: ToastGravity.BOTTOM,
@@ -76,5 +116,4 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         });
   }
-
 }
