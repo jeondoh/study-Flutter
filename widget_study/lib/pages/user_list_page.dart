@@ -15,13 +15,14 @@ class _UserListPageState extends State<UserListPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
 
-  final users = <InputForm>[];
   late Box _darkMode;
+  late Box<InputForm> _inputFormBox;
 
   @override
   void initState() {
     super.initState();
     _darkMode = Hive.box('darkModeBox');
+    _inputFormBox = Hive.box<InputForm>('inputFormBox');
   }
 
   @override
@@ -65,27 +66,44 @@ class _UserListPageState extends State<UserListPage> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        users.add(InputForm(
-                            name: nameController.text,
-                            age: int.parse(ageController.text)));
-                      });
+                      _inputFormBox.add(InputForm(
+                          name: nameController.text,
+                          age: int.parse(ageController.text)));
                     },
                     child: const Text('add'))
               ],
             ),
             const Divider(),
-            Expanded(
-              child: users.isEmpty
-                  ? const Text('empty')
-                  : ListView.builder(
-                      itemCount: users.length,
-                      itemBuilder: (context, i) {
-                        return ListTile(
-                          title: Text(users[i].name),
-                          subtitle: Text(users[i].age.toString()),
-                        );
-                      }),
+            ValueListenableBuilder(
+            valueListenable: Hive.box<InputForm>('inputFormBox').listenable(),
+              builder: (context, Box<InputForm> inputFormBox, widget) {
+                final users = inputFormBox.values.toList();
+
+                return Expanded(
+                  child: users.isEmpty
+                      ? const Text('empty')
+                      : ListView.builder(
+                          itemCount: users.length,
+                          itemBuilder: (context, i) {
+                            final inputForm = users[i];
+
+                            return Column(
+                              children: [
+                                ListTile(
+                                  title: Text(users[i].name),
+                                  subtitle: Text(users[i].age.toString()),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    inputFormBox.delete(inputForm.key);
+                                  },
+                                ),
+                              ],
+                            );
+                          }),
+                );
+              },
             ),
           ],
         ));
