@@ -39,6 +39,8 @@ dependencies:
   timezone: ^0.8.0
   flutter_native_timezone: ^2.0.0
   image_picker: ^0.8.5+3
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
