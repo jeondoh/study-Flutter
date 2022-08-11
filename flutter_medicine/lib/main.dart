@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medicine/components/medicine_themes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,10 +12,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: MedicineThemes.lightTheme,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      builder: (context, child) => MediaQuery(
+        child: child!,
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      ),
     );
   }
 }
