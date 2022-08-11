@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:widget_study/pages/image_page.dart';
 import 'package:widget_study/pages/my_home_page.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
-void main() {
+import 'pages/user_list_page.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await _initHive();
+
   _initTimezoneSetting();
   _initNotiSetting();
   runApp(const MyApp());
+}
+
+Future<void> _initHive() async {
+  await Hive.initFlutter();
+  await Hive.openBox('darkModeBox');
 }
 
 final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -47,12 +58,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
-      // home: const MyHomePage(),
-      home: const ImagePage(),
+    return ValueListenableBuilder(
+      valueListenable: Hive.box('darkModeBox').listenable(),
+
+      builder: (context, Box box, widget) {
+        final darkMode = box.get('darkMode', defaultValue: false);
+
+        return MaterialApp(
+          themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
+          darkTheme: ThemeData.dark(),
+          theme: ThemeData(
+            primarySwatch: Colors.orange,
+          ),
+          // home: const MyHomePage(),
+          // home: const ImagePage(),
+          home: const UserListPage(),
+        );
+      }
     );
   }
 }
