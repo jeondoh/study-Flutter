@@ -9,6 +9,7 @@ class MedicineThemes {
         splashColor: Colors.white,
         brightness: Brightness.light,
         textTheme: _textTheme,
+        appBarTheme: _appBarTheme,
       );
 
   static ThemeData get darkTheme => ThemeData(
@@ -17,7 +18,16 @@ class MedicineThemes {
         splashColor: Colors.white,
         brightness: Brightness.dark,
         textTheme: _textTheme,
+        appBarTheme: _appBarTheme,
       );
+
+  static const AppBarTheme _appBarTheme = AppBarTheme(
+    backgroundColor: Colors.white,
+    elevation: 0,
+    iconTheme: IconThemeData(
+      color: MedicineColors.primaryColor,
+    ),
+  );
 
   static const TextTheme _textTheme = TextTheme(
     headline4: TextStyle(

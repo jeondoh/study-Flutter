@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_medicine/components/medicine_colors.dart';
+import 'package:flutter_medicine/pages/add_medicine/add_medicine_page.dart';
 
-import 'add_medicine/add_medicine_page.dart';
 import 'history/history_page.dart';
 import 'today/today_page.dart';
 
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onAddMedicine() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const AddPage()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const AddMedicinePage()));
   }
 }
