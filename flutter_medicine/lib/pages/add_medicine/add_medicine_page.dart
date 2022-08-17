@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_medicine/components/medicine_constants.dart';
 import 'package:flutter_medicine/components/page_route.dart';
 import 'package:flutter_medicine/pages/add_medicine/add_alarm_page.dart';
+import 'package:flutter_medicine/pages/add_medicine/components/add_page_widget.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddMedicinePage extends StatefulWidget {
@@ -30,72 +31,52 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
       appBar: AppBar(
         leading: const CloseButton(),
       ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: pagePadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '어떤 약이에요?',
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-                const SizedBox(
-                  height: largeSpace,
-                ),
-                Center(
-                  child: MedicineImageButton(
-                    changeImageFile: (File? value) {
-                      _medicineImage = value;
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  height: largeSpace + regularSpace,
-                ),
-                Text(
-                  '약 이름',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                TextFormField(
-                  controller: _nameController,
-                  maxLength: 20,
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.done,
-                  style: Theme.of(context).textTheme.bodyText1,
-                  decoration: InputDecoration(
-                    hintText: '복용할 약 이름을 기입해주세요.',
-                    hintStyle: Theme.of(context).textTheme.bodyText2,
-                    contentPadding: textFieldContentPadding,
-                  ),
-                  // _nameController 변화관리(약이름이 있으면 다음버튼 활성화)
-                  onChanged: (_) {
-                    setState(() {});
-                  },
-                ),
-              ],
+      body: SingleChildScrollView(
+        child: AddPageBody(
+          children: [
+            Text(
+              '어떤 약이에요?',
+              style: Theme.of(context).textTheme.headline4,
             ),
-          ),
+            const SizedBox(
+              height: largeSpace,
+            ),
+            Center(
+              child: MedicineImageButton(
+                changeImageFile: (File? value) {
+                  _medicineImage = value;
+                },
+              ),
+            ),
+            const SizedBox(
+              height: largeSpace + regularSpace,
+            ),
+            Text(
+              '약 이름',
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            TextFormField(
+              controller: _nameController,
+              maxLength: 20,
+              keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.done,
+              style: Theme.of(context).textTheme.bodyText1,
+              decoration: InputDecoration(
+                hintText: '복용할 약 이름을 기입해주세요.',
+                hintStyle: Theme.of(context).textTheme.bodyText2,
+                contentPadding: textFieldContentPadding,
+              ),
+              // _nameController 변화관리(약이름이 있으면 다음버튼 활성화)
+              onChanged: (_) {
+                setState(() {});
+              },
+            ),
+          ],
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: submitButtonBoxPadding,
-          child: SizedBox(
-            height: submitButtonHeight,
-            child: ElevatedButton(
-              onPressed: _nameController.text.isEmpty ? null : _onAddAlarmPage,
-              style: ElevatedButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.subtitle1,
-              ),
-              child: const Text('다음'),
-            ),
-          ),
-        ),
+      bottomNavigationBar: BottomSubmitButton(
+        onPressed: _nameController.text.isEmpty ? null : _onAddAlarmPage,
+        text: '다음',
       ),
     );
   }
