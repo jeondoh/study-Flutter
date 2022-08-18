@@ -6,6 +6,7 @@ import 'package:flutter_medicine/components/common_widgets.dart';
 import 'package:flutter_medicine/components/medicine_colors.dart';
 import 'package:flutter_medicine/components/medicine_constants.dart';
 import 'package:flutter_medicine/main.dart';
+import 'package:flutter_medicine/models/medicine.dart';
 import 'package:flutter_medicine/pages/add_medicine/components/add_page_widget.dart';
 import 'package:flutter_medicine/services/add_medicine_service.dart';
 import 'package:flutter_medicine/services/file_service.dart';
@@ -47,20 +48,29 @@ class AddAlarmPage extends StatelessWidget {
         onPressed: () async {
           for (var alarm in service.alarms) {
             final result = await notification.addNotification(
-              medicineId: 0,
+              medicineId: medicineRepository.newId,
               alarmTimeStr: alarm,
               title: '$alarm 약 먹을 시간이에요!',
               body: '$medicineName 복약했다고 알려주세요!',
             );
             if (!result) {
-              showPermissionDenied(context, permission: '알람');
-              break;
+              return showPermissionDenied(context, permission: '알람');
             }
           }
           String? imageFilePath;
           if (medicineImage != null) {
             imageFilePath = await saveImageToLocalDirectory(medicineImage!);
           }
+
+          final medicine = Medicine(
+            id: medicineRepository.newId,
+            name: medicineName,
+            imagePath: imageFilePath,
+            alarms: service.alarms.toList(),
+          );
+          medicineRepository.addMedicine(medicine);
+          // 팝업 전체 종료
+          Navigator.popUntil(context, (route) => route.isFirst);
         },
         text: '완료',
       ),
