@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_medicine/components/common_widgets.dart';
 import 'package:flutter_medicine/components/medicine_colors.dart';
 import 'package:flutter_medicine/components/medicine_constants.dart';
+import 'package:flutter_medicine/main.dart';
 import 'package:flutter_medicine/pages/add_medicine/components/add_page_widget.dart';
 import 'package:flutter_medicine/services/add_medicine_service.dart';
 import 'package:intl/intl.dart';
@@ -42,7 +43,20 @@ class AddAlarmPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomSubmitButton(
-        onPressed: () {},
+        onPressed: () async {
+          for (var alarm in service.alarms) {
+            final result = await notification.addNotification(
+              medicineId: 0,
+              alarmTimeStr: alarm,
+              title: '$alarm 약 먹을 시간이에요!',
+              body: '$medicineName 복약했다고 알려주세요!',
+            );
+            if (!result) {
+              showPermissionDenied(context, permission: '알람');
+              break;
+            }
+          }
+        },
         text: '완료',
       ),
     );

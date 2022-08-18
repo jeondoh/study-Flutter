@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_medicine/components/medicine_themes.dart';
+import 'package:flutter_medicine/services/notification_service.dart';
 
 import 'pages/home_page.dart';
 
+final notification = NotificationService();
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  notification.initializeTimeZone();
+  notification.initializeNotification();
+
   runApp(const MyApp());
 }
 
