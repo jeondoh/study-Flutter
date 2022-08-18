@@ -8,6 +8,7 @@ import 'package:flutter_medicine/components/medicine_constants.dart';
 import 'package:flutter_medicine/main.dart';
 import 'package:flutter_medicine/pages/add_medicine/components/add_page_widget.dart';
 import 'package:flutter_medicine/services/add_medicine_service.dart';
+import 'package:flutter_medicine/services/file_service.dart';
 import 'package:intl/intl.dart';
 
 class AddAlarmPage extends StatelessWidget {
@@ -55,6 +56,10 @@ class AddAlarmPage extends StatelessWidget {
               showPermissionDenied(context, permission: '알람');
               break;
             }
+          }
+          String? imageFilePath;
+          if (medicineImage != null) {
+            imageFilePath = await saveImageToLocalDirectory(medicineImage!);
           }
         },
         text: '완료',
