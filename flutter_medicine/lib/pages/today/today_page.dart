@@ -7,6 +7,7 @@ import 'package:flutter_medicine/components/page_route.dart';
 import 'package:flutter_medicine/main.dart';
 import 'package:flutter_medicine/models/medicine.dart';
 import 'package:flutter_medicine/models/medicine_alarm.dart';
+import 'package:flutter_medicine/pages/today/today_empty_widget.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class TodayPage extends StatelessWidget {
@@ -22,7 +23,6 @@ class TodayPage extends StatelessWidget {
           style: Theme.of(context).textTheme.headline4,
         ),
         const SizedBox(height: regularSpace),
-        const Divider(height: 1, thickness: 2.0),
         Expanded(
           child: ValueListenableBuilder(
             valueListenable: medicineRepository.medicineBox.listenable(),
@@ -41,6 +41,10 @@ class TodayPage extends StatelessWidget {
     final medicines = box.values.toList();
     final medicineAlarms = <MedicineAlarm>[];
 
+    if (medicines.isEmpty) {
+      return const TodayEmpty();
+    }
+
     for (var medicine in medicines) {
       for (var alarm in medicine.alarms) {
         medicineAlarms.add(MedicineAlarm(
@@ -53,17 +57,25 @@ class TodayPage extends StatelessWidget {
       }
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: smallSpace),
-      itemCount: medicineAlarms.length,
-      itemBuilder: (context, index) {
-        return _MedicineListTile(
-          medicineAlarm: medicineAlarms[index],
-        );
-      },
-      separatorBuilder: (context, index) {
-        return const Divider(height: regularSpace);
-      },
+    return Column(
+      children: [
+        const Divider(height: 1, thickness: 1.0),
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: smallSpace),
+            itemCount: medicineAlarms.length,
+            itemBuilder: (context, index) {
+              return _MedicineListTile(
+                medicineAlarm: medicineAlarms[index],
+              );
+            },
+            separatorBuilder: (context, index) {
+              return const Divider(height: regularSpace);
+            },
+          ),
+        ),
+        const Divider(height: 1, thickness: 1.0),
+      ],
     );
   }
 }
