@@ -123,7 +123,7 @@ class _AlarmBox extends StatelessWidget {
                 context: context,
                 builder: (context) {
                   return _TimePickerBottomSheet(
-                    initalTime: time,
+                    initialTime: time,
                     service: service,
                   );
                 },
@@ -139,16 +139,16 @@ class _AlarmBox extends StatelessWidget {
 
 class _TimePickerBottomSheet extends StatelessWidget {
   _TimePickerBottomSheet(
-      {Key? key, required this.initalTime, required this.service})
+      {Key? key, required this.initialTime, required this.service})
       : super(key: key);
 
-  final String initalTime;
+  final String initialTime;
   final AddMedicineService service;
   DateTime? _setDateTime;
 
   @override
   Widget build(BuildContext context) {
-    final initalDateTime = DateFormat('HH:mm').parse(initalTime);
+    final initalDateTime = DateFormat('HH:mm').parse(initialTime);
 
     return BottomSheetBody(
       children: [
@@ -189,7 +189,7 @@ class _TimePickerBottomSheet extends StatelessWidget {
                   ),
                   onPressed: () {
                     service.setAlarm(
-                      prevTime: initalTime,
+                      prevTime: initialTime,
                       setTime: _setDateTime ?? initalDateTime,
                     );
                     Navigator.pop(context);
