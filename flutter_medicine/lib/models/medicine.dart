@@ -4,7 +4,7 @@ part 'medicine.g.dart';
 
 // flutter packages pub run build_runner build
 @HiveType(typeId: 1)
-class Medicine {
+class Medicine extends HiveObject {
   Medicine({
     required this.id,
     required this.name,

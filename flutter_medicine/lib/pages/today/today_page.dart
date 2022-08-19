@@ -1,18 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_medicine/components/medicine_constants.dart';
+import 'package:flutter_medicine/main.dart';
+import 'package:flutter_medicine/models/medicine.dart';
+import 'package:flutter_medicine/models/medicine_alarm.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class TodayPage extends StatelessWidget {
-  TodayPage({Key? key}) : super(key: key);
-
-  final medicineList = [
-    '약',
-    '약 이름',
-    '약 이름 테스트',
-    '약 이름 테스트',
-    '약 이름',
-    '약',
-  ];
+  const TodayPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +23,46 @@ class TodayPage extends StatelessWidget {
         const SizedBox(height: regularSpace),
         const Divider(height: 1, thickness: 2.0),
         Expanded(
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: smallSpace),
-            itemCount: medicineList.length,
-            itemBuilder: (context, index) {
-              return _MedicineListTile(
-                name: medicineList[index],
-              );
-            },
-            separatorBuilder: (context, index) {
-              return const Divider(height: regularSpace);
-            },
+          child: ValueListenableBuilder(
+            valueListenable: medicineRepository.medicineBox.listenable(),
+            builder: _builderMedicineListView,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _builderMedicineListView(
+    context,
+    Box<Medicine> box,
+    _,
+  ) {
+    final medicines = box.values.toList();
+    final medicineAlarms = <MedicineAlarm>[];
+
+    for (var medicine in medicines) {
+      for (var alarm in medicine.alarms) {
+        medicineAlarms.add(MedicineAlarm(
+          medicine.id,
+          medicine.name,
+          medicine.imagePath,
+          alarm,
+          medicine.key,
+        ));
+      }
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: smallSpace),
+      itemCount: medicineAlarms.length,
+      itemBuilder: (context, index) {
+        return _MedicineListTile(
+          medicineAlarm: medicineAlarms[index],
+        );
+      },
+      separatorBuilder: (context, index) {
+        return const Divider(height: regularSpace);
+      },
     );
   }
 }
@@ -47,10 +70,10 @@ class TodayPage extends StatelessWidget {
 class _MedicineListTile extends StatelessWidget {
   const _MedicineListTile({
     Key? key,
-    required this.name,
+    required this.medicineAlarm,
   }) : super(key: key);
 
-  final String name;
+  final MedicineAlarm medicineAlarm;
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +85,13 @@ class _MedicineListTile extends StatelessWidget {
           CupertinoButton(
             onPressed: () {},
             padding: EdgeInsets.zero,
-            child: const CircleAvatar(
+            child: CircleAvatar(
               radius: 40,
+              foregroundImage: medicineAlarm.imagePath == null
+                  ? null
+                  : FileImage(
+                      File(medicineAlarm.imagePath!),
+                    ),
             ),
           ),
           const SizedBox(width: smallSpace),
@@ -71,12 +99,12 @@ class _MedicineListTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("🕑 08:30", style: textStyle),
+                Text("🕑 ${medicineAlarm.alarmTime}", style: textStyle),
                 const SizedBox(height: 6),
                 Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text(name, style: textStyle),
+                    Text(medicineAlarm.name, style: textStyle),
                     _TitleActionButton(
                       onTap: () {},
                       title: '지금',
@@ -93,7 +121,9 @@ class _MedicineListTile extends StatelessWidget {
             ),
           ),
           CupertinoButton(
-            onPressed: () {},
+            onPressed: () {
+              medicineRepository.deleteMedicine(medicineAlarm.key);
+            },
             child: const Icon(CupertinoIcons.ellipsis_vertical),
           ),
         ],
@@ -126,5 +156,14 @@ class _TitleActionButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _BuilderMedicineListView extends StatelessWidget {
+  const _BuilderMedicineListView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
