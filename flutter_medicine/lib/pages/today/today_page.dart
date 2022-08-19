@@ -7,6 +7,7 @@ import 'package:flutter_medicine/components/page_route.dart';
 import 'package:flutter_medicine/main.dart';
 import 'package:flutter_medicine/models/medicine.dart';
 import 'package:flutter_medicine/models/medicine_alarm.dart';
+import 'package:flutter_medicine/pages/bottomSheet/time_setting_bottomSheet.dart';
 import 'package:flutter_medicine/pages/today/today_empty_widget.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -132,7 +133,13 @@ class _MedicineListTile extends StatelessWidget {
                   ),
                   Text('|', style: textStyle),
                   _TitleActionButton(
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => TimeSettingBottomSheet(
+                            initialTime: medicineAlarm.alarmTime),
+                      );
+                    },
                     title: '아까',
                   ),
                   Text('먹었어요!', style: textStyle),
