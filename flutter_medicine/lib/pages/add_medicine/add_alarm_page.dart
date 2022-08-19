@@ -148,7 +148,7 @@ class _TimePickerBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initalDateTime = DateFormat('HH:mm').parse(initialTime);
+    final initialDateTime = DateFormat('HH:mm').parse(initialTime);
 
     return BottomSheetBody(
       children: [
@@ -159,7 +159,7 @@ class _TimePickerBottomSheet extends StatelessWidget {
               _setDateTime = dateTime;
             },
             mode: CupertinoDatePickerMode.time,
-            initialDateTime: initalDateTime,
+            initialDateTime: initialDateTime,
           ),
         ),
         const SizedBox(height: regularSpace),
@@ -190,7 +190,7 @@ class _TimePickerBottomSheet extends StatelessWidget {
                   onPressed: () {
                     service.setAlarm(
                       prevTime: initialTime,
-                      setTime: _setDateTime ?? initalDateTime,
+                      setTime: _setDateTime ?? initialDateTime,
                     );
                     Navigator.pop(context);
                   },
