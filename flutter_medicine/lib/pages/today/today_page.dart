@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_medicine/components/medicine_constants.dart';
+import 'package:flutter_medicine/components/page_route.dart';
 import 'package:flutter_medicine/main.dart';
 import 'package:flutter_medicine/models/medicine.dart';
 import 'package:flutter_medicine/models/medicine_alarm.dart';
@@ -79,55 +80,62 @@ class _MedicineListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.bodyText2;
 
-    return Container(
-      child: Row(
-        children: [
-          CupertinoButton(
-            onPressed: () {},
-            padding: EdgeInsets.zero,
-            child: CircleAvatar(
-              radius: 40,
-              foregroundImage: medicineAlarm.imagePath == null
-                  ? null
-                  : FileImage(
-                      File(medicineAlarm.imagePath!),
+    return Row(
+      children: [
+        CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: medicineAlarm.imagePath == null
+              ? null
+              : () {
+                  Navigator.push(
+                    context,
+                    FadePageRoute(
+                      page: _ImageDetailPage(medicineAlarm: medicineAlarm),
                     ),
-            ),
+                  );
+                },
+          child: CircleAvatar(
+            radius: 40,
+            foregroundImage: medicineAlarm.imagePath == null
+                ? null
+                : FileImage(
+                    File(medicineAlarm.imagePath!),
+                  ),
           ),
-          const SizedBox(width: smallSpace),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("🕑 ${medicineAlarm.alarmTime}", style: textStyle),
-                const SizedBox(height: 6),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(medicineAlarm.name, style: textStyle),
-                    _TitleActionButton(
-                      onTap: () {},
-                      title: '지금',
-                    ),
-                    Text('|', style: textStyle),
-                    _TitleActionButton(
-                      onTap: () {},
-                      title: '아까',
-                    ),
-                    Text('먹었어요!', style: textStyle),
-                  ],
-                ),
-              ],
-            ),
+        ),
+        const SizedBox(width: smallSpace),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("🕑 ${medicineAlarm.alarmTime}", style: textStyle),
+              const SizedBox(height: 6),
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(medicineAlarm.name, style: textStyle),
+                  _TitleActionButton(
+                    onTap: () {},
+                    title: '지금',
+                  ),
+                  Text('|', style: textStyle),
+                  _TitleActionButton(
+                    onTap: () {},
+                    title: '아까',
+                  ),
+                  Text('먹었어요!', style: textStyle),
+                ],
+              ),
+            ],
           ),
-          CupertinoButton(
-            onPressed: () {
-              medicineRepository.deleteMedicine(medicineAlarm.key);
-            },
-            child: const Icon(CupertinoIcons.ellipsis_vertical),
-          ),
-        ],
-      ),
+        ),
+        CupertinoButton(
+          onPressed: () {
+            medicineRepository.deleteMedicine(medicineAlarm.key);
+          },
+          child: const Icon(CupertinoIcons.ellipsis_vertical),
+        ),
+      ],
     );
   }
 }
@@ -159,11 +167,23 @@ class _TitleActionButton extends StatelessWidget {
   }
 }
 
-class _BuilderMedicineListView extends StatelessWidget {
-  const _BuilderMedicineListView({Key? key}) : super(key: key);
+class _ImageDetailPage extends StatelessWidget {
+  const _ImageDetailPage({
+    Key? key,
+    required this.medicineAlarm,
+  }) : super(key: key);
+
+  final MedicineAlarm medicineAlarm;
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        leading: const CloseButton(),
+      ),
+      body: Center(
+        child: Image.file(File(medicineAlarm.imagePath!)),
+      ),
+    );
   }
 }
