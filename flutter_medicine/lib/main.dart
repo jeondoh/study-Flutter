@@ -5,10 +5,12 @@ import 'package:flutter_medicine/repositories/medicine_repository.dart';
 import 'package:flutter_medicine/services/notification_service.dart';
 
 import 'pages/home_page.dart';
+import 'repositories/medicine_history_repository.dart';
 
 final notification = NotificationService();
 final hive = MedicineHive();
 final medicineRepository = MedicineRepository();
+final historyRepository = MedicineHistoryRepository();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -7,6 +7,7 @@ import 'package:flutter_medicine/components/page_route.dart';
 import 'package:flutter_medicine/main.dart';
 import 'package:flutter_medicine/models/medicine.dart';
 import 'package:flutter_medicine/models/medicine_alarm.dart';
+import 'package:flutter_medicine/models/medicine_history.dart';
 import 'package:flutter_medicine/pages/bottomSheet/time_setting_bottomSheet.dart';
 import 'package:flutter_medicine/pages/today/today_empty_widget.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -138,7 +139,16 @@ class _MedicineListTile extends StatelessWidget {
                         context: context,
                         builder: (context) => TimeSettingBottomSheet(
                             initialTime: medicineAlarm.alarmTime),
-                      );
+                      ).then((takeDateTime) {
+                        if (takeDateTime == null || takeDateTime is! DateTime) {
+                          return;
+                        }
+                        historyRepository.addHistory(MedicineHistory(
+                          medicineId: medicineAlarm.id,
+                          alarmTime: medicineAlarm.alarmTime,
+                          takeTime: takeDateTime,
+                        ));
+                      });
                     },
                     title: '아까',
                   ),
