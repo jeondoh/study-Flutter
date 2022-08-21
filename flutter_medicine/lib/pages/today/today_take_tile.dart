@@ -9,6 +9,7 @@ import 'package:flutter_medicine/models/medicine_alarm.dart';
 import 'package:flutter_medicine/models/medicine_history.dart';
 import 'package:flutter_medicine/pages/bottomSheet/time_setting_bottomSheet.dart';
 import 'package:flutter_medicine/pages/today/image_detail_page.dart';
+import 'package:intl/intl.dart';
 
 class BeforeTakeTile extends StatelessWidget {
   const BeforeTakeTile({
@@ -48,31 +49,43 @@ class BeforeTakeTile extends StatelessWidget {
     return [
       Text(medicineAlarm.name, style: textStyle),
       _TitleActionButton(
-        onTap: () {},
+        onTap: () {
+          historyRepository.addHistory(MedicineHistory(
+            medicineId: medicineAlarm.id,
+            alarmTime: medicineAlarm.alarmTime,
+            takeTime: DateTime.now(),
+          ));
+        },
         title: '지금',
       ),
       Text('|', style: textStyle),
       _TitleActionButton(
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (context) =>
-                TimeSettingBottomSheet(initialTime: medicineAlarm.alarmTime),
-          ).then((takeDateTime) {
-            if (takeDateTime == null || takeDateTime is! DateTime) {
-              return;
-            }
-            historyRepository.addHistory(MedicineHistory(
-              medicineId: medicineAlarm.id,
-              alarmTime: medicineAlarm.alarmTime,
-              takeTime: takeDateTime,
-            ));
-          });
-        },
+        onTap: () => _onPreviousTake(context),
         title: '아까',
       ),
       Text('먹었어요!', style: textStyle),
     ];
+  }
+
+  void _onPreviousTake(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) =>
+          TimeSettingBottomSheet(initialTime: medicineAlarm.alarmTime),
+    ).then(
+      (takeDateTime) {
+        if (takeDateTime == null || takeDateTime is! DateTime) {
+          return;
+        }
+        historyRepository.addHistory(
+          MedicineHistory(
+            medicineId: medicineAlarm.id,
+            alarmTime: medicineAlarm.alarmTime,
+            takeTime: takeDateTime,
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -80,9 +93,11 @@ class AfterTakeTile extends StatelessWidget {
   const AfterTakeTile({
     Key? key,
     required this.medicineAlarm,
+    required this.history,
   }) : super(key: key);
 
   final MedicineAlarm medicineAlarm;
+  final MedicineHistory history;
 
   @override
   Widget build(BuildContext context) {
@@ -107,33 +122,63 @@ class AfterTakeTile extends StatelessWidget {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text.rich(
-                TextSpan(
-                  text: "✅ ${medicineAlarm.alarmTime} ->",
-                  style: textStyle,
-                  children: [
-                    TextSpan(
-                      text: ' 20:19',
-                      style: textStyle?.copyWith(fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 6),
-              Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
-                Text(medicineAlarm.name, style: textStyle),
-                _TitleActionButton(
-                  onTap: () {},
-                  title: '20시 19분에',
-                ),
-                Text('먹었어요!', style: textStyle),
-              ]),
-            ],
+            children: _buildTitleBody(context, textStyle),
           ),
         ),
         _MoreButton(medicineAlarm: medicineAlarm),
       ],
+    );
+  }
+
+  List<Widget> _buildTitleBody(BuildContext context, TextStyle? textStyle) {
+    return [
+      Text.rich(
+        TextSpan(
+          text: "✅ ${medicineAlarm.alarmTime} -> ",
+          style: textStyle,
+          children: [
+            TextSpan(
+              text: takeTimeStr,
+              style: textStyle?.copyWith(fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 6),
+      Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Text(medicineAlarm.name, style: textStyle),
+          _TitleActionButton(
+            onTap: () => _onTap(context),
+            title: DateFormat('HH시 mm분에').format(history.takeTime),
+          ),
+          Text('먹었어요!', style: textStyle),
+        ],
+      ),
+    ];
+  }
+
+  String get takeTimeStr => DateFormat('HH:mm').format(history.takeTime);
+
+  void _onTap(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => TimeSettingBottomSheet(initialTime: takeTimeStr),
+    ).then(
+      (takeDateTime) {
+        if (takeDateTime == null || takeDateTime is! DateTime) {
+          return;
+        }
+        historyRepository.updateHistory(
+          key: history.key,
+          history: MedicineHistory(
+            medicineId: medicineAlarm.id,
+            alarmTime: medicineAlarm.alarmTime,
+            takeTime: takeDateTime,
+          ),
+        );
+      },
     );
   }
 }

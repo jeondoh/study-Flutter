@@ -80,9 +80,7 @@ class TodayPage extends StatelessWidget {
       valueListenable: historyRepository.medicineBox.listenable(),
       builder: (context, Box<MedicineHistory> historyBox, _) {
         if (historyBox.values.isEmpty) {
-          return BeforeTakeTile(
-            medicineAlarm: medicineAlarm,
-          );
+          return BeforeTakeTile(medicineAlarm: medicineAlarm);
         }
 
         final todayTakeHistory = historyBox.values.singleWhere(
@@ -99,12 +97,11 @@ class TodayPage extends StatelessWidget {
 
         if (todayTakeHistory.medicineId == -1 &&
             todayTakeHistory.alarmTime == '') {
-          return BeforeTakeTile(
-            medicineAlarm: medicineAlarm,
-          );
+          return BeforeTakeTile(medicineAlarm: medicineAlarm);
         }
         return AfterTakeTile(
           medicineAlarm: medicineAlarm,
+          history: todayTakeHistory,
         );
       },
     );
