@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_medicine/components/medicine_colors.dart';
 import 'package:flutter_medicine/components/medicine_constants.dart';
+import 'package:flutter_medicine/main.dart';
 import 'package:flutter_medicine/pages/add_medicine/add_medicine_page.dart';
 
 import 'history/history_page.dart';

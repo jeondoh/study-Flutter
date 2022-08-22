@@ -23,7 +23,7 @@ class HistoryPage extends StatelessWidget {
         const Divider(height: 1, thickness: 1.0),
         Expanded(
           child: ValueListenableBuilder(
-            valueListenable: historyRepository.medicineBox.listenable(),
+            valueListenable: historyRepository.historyBox.listenable(),
             builder: _buildListView,
           ),
         ),

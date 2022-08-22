@@ -247,18 +247,42 @@ class _MoreButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoButton(
       onPressed: () {
-        // medicineRepository.deleteMedicine(medicineAlarm.key);
         showModalBottomSheet(
           context: context,
           builder: (context) => MoreActionButtonSheet(
             onPressedModify: () {},
-            onPressedDeleteOnlyMedicine: () {},
-            onPressedDeleteAll: () {},
+            onPressedDeleteOnlyMedicine: () {
+              notification.deleteMultipleAlarm(alarmIds);
+              medicineRepository.deleteMedicine(medicineAlarm.key);
+              Navigator.pop(context);
+            },
+            onPressedDeleteAll: () {
+              notification.deleteMultipleAlarm(alarmIds);
+              historyRepository.deleteAllHistory(keys);
+              medicineRepository.deleteMedicine(medicineAlarm.key);
+              Navigator.pop(context);
+            },
           ),
         );
       },
       child: const Icon(CupertinoIcons.ellipsis_vertical),
     );
+  }
+
+  List<String> get alarmIds {
+    final medicine = medicineRepository.medicineBox.values
+        .singleWhere((element) => element.id == medicineAlarm.id);
+    final alarmIds = medicine.alarms
+        .map((alarmStr) => notification.alarmId(medicineAlarm.id, alarmStr))
+        .toList();
+    return alarmIds;
+  }
+
+  Iterable<int> get keys {
+    final histories = historyRepository.historyBox.values.where((history) =>
+        history.medicineId == medicineAlarm.id &&
+        history.medicineKey == medicineAlarm.key);
+    return histories.map((e) => e.key as int);
   }
 }
 

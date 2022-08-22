@@ -77,7 +77,7 @@ class TodayPage extends StatelessWidget {
 
   Widget _buildListTile(MedicineAlarm medicineAlarm) {
     return ValueListenableBuilder(
-      valueListenable: historyRepository.medicineBox.listenable(),
+      valueListenable: historyRepository.historyBox.listenable(),
       builder: (context, Box<MedicineHistory> historyBox, _) {
         if (historyBox.values.isEmpty) {
           return BeforeTakeTile(medicineAlarm: medicineAlarm);
