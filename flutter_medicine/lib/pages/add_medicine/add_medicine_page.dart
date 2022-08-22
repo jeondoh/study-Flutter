@@ -5,21 +5,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_medicine/components/common_widgets.dart';
 import 'package:flutter_medicine/components/medicine_constants.dart';
 import 'package:flutter_medicine/components/page_route.dart';
+
+import 'package:flutter_medicine/main.dart';
+import 'package:flutter_medicine/models/medicine.dart';
 import 'package:flutter_medicine/pages/add_medicine/add_alarm_page.dart';
 import 'package:flutter_medicine/pages/add_medicine/components/add_page_widget.dart';
 import 'package:flutter_medicine/pages/bottomSheet/pick_image_bottomSheet.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddMedicinePage extends StatefulWidget {
-  const AddMedicinePage({Key? key}) : super(key: key);
+  const AddMedicinePage({
+    Key? key,
+    this.updateMedicineId = -1,
+  }) : super(key: key);
+
+  final int updateMedicineId;
 
   @override
   State<AddMedicinePage> createState() => _AddMedicinePageState();
 }
 
 class _AddMedicinePageState extends State<AddMedicinePage> {
-  final _nameController = TextEditingController();
+  late TextEditingController _nameController;
   File? _medicineImage;
+
+  bool get _isUpdate => widget.updateMedicineId != -1;
+  Medicine get _updateMedicine => medicineRepository.medicineBox.values
+      .singleWhere((medicine) => medicine.id == widget.updateMedicineId);
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isUpdate) {
+      _nameController = TextEditingController(text: _updateMedicine.name);
+      if (_updateMedicine.imagePath != null) {
+        _medicineImage = File(_updateMedicine.imagePath!);
+      }
+    } else {
+      _nameController = TextEditingController();
+    }
+  }
 
   @override
   void dispose() {
@@ -45,6 +70,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
             ),
             Center(
               child: _MedicineImageButton(
+                updateImage: _medicineImage,
                 changeImageFile: (File? value) {
                   _medicineImage = value;
                 },
@@ -85,20 +111,27 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
 
   void _onAddAlarmPage() {
     Navigator.push(
-        context,
-        FadePageRoute(
-            page: AddAlarmPage(
+      context,
+      FadePageRoute(
+        page: AddAlarmPage(
           medicineImage: _medicineImage,
           medicineName: _nameController.text,
-        )));
+          updateMedicineId: widget.updateMedicineId,
+        ),
+      ),
+    );
   }
 }
 
 class _MedicineImageButton extends StatefulWidget {
-  const _MedicineImageButton({Key? key, required this.changeImageFile})
-      : super(key: key);
+  const _MedicineImageButton({
+    Key? key,
+    required this.changeImageFile,
+    this.updateImage,
+  }) : super(key: key);
 
   final ValueChanged<File?> changeImageFile;
+  final File? updateImage;
 
   @override
   State<_MedicineImageButton> createState() => _MedicineImageButtonState();
@@ -106,6 +139,12 @@ class _MedicineImageButton extends StatefulWidget {
 
 class _MedicineImageButtonState extends State<_MedicineImageButton> {
   File? _pickedImage;
+
+  @override
+  void initState() {
+    super.initState();
+    _pickedImage = widget.updateImage;
+  }
 
   @override
   Widget build(BuildContext context) {

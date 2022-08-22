@@ -7,6 +7,7 @@ import 'package:flutter_medicine/components/page_route.dart';
 import 'package:flutter_medicine/main.dart';
 import 'package:flutter_medicine/models/medicine_alarm.dart';
 import 'package:flutter_medicine/models/medicine_history.dart';
+import 'package:flutter_medicine/pages/add_medicine/add_medicine_page.dart';
 import 'package:flutter_medicine/pages/bottomSheet/more_action_bottomSheet.dart';
 import 'package:flutter_medicine/pages/bottomSheet/time_setting_bottomSheet.dart';
 import 'package:flutter_medicine/pages/today/image_detail_page.dart';
@@ -250,7 +251,13 @@ class _MoreButton extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           builder: (context) => MoreActionButtonSheet(
-            onPressedModify: () {},
+            onPressedModify: () {
+              Navigator.push(
+                context,
+                FadePageRoute(
+                    page: AddMedicinePage(updateMedicineId: medicineAlarm.id)),
+              ).then((_) => Navigator.maybePop(context));
+            },
             onPressedDeleteOnlyMedicine: () {
               notification.deleteMultipleAlarm(alarmIds);
               medicineRepository.deleteMedicine(medicineAlarm.key);

@@ -12,13 +12,20 @@ import 'package:flutter_medicine/services/add_medicine_service.dart';
 import 'package:flutter_medicine/services/file_service.dart';
 
 class AddAlarmPage extends StatelessWidget {
-  AddAlarmPage(
-      {Key? key, required this.medicineImage, required this.medicineName})
-      : super(key: key);
+  AddAlarmPage({
+    Key? key,
+    required this.updateMedicineId,
+    required this.medicineImage,
+    required this.medicineName,
+  }) : super(key: key) {
+    service = AddMedicineService(updateMedicineId);
+  }
 
+  final int updateMedicineId;
   final File? medicineImage;
   final String medicineName;
-  final service = AddMedicineService();
+
+  late AddMedicineService service;
 
   @override
   Widget build(BuildContext context) {
