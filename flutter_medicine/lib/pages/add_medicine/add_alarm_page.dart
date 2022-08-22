@@ -52,36 +52,89 @@ class AddAlarmPage extends StatelessWidget {
       ),
       bottomNavigationBar: BottomSubmitButton(
         onPressed: () async {
-          for (var alarm in service.alarms) {
-            final result = await notification.addNotification(
-              medicineId: medicineRepository.newId,
-              alarmTimeStr: alarm,
-              title: '$alarm 약 먹을 시간이에요!',
-              body: '$medicineName 복약했다고 알려주세요!',
-            );
-            if (!result) {
-              return showPermissionDenied(context, permission: '알람');
-            }
-          }
-          String? imageFilePath;
-          if (medicineImage != null) {
-            imageFilePath = await saveImageToLocalDirectory(medicineImage!);
-          }
-
-          final medicine = Medicine(
-            id: medicineRepository.newId,
-            name: medicineName,
-            imagePath: imageFilePath,
-            alarms: service.alarms.toList(),
-          );
-          medicineRepository.addMedicine(medicine);
-          // 팝업 전체 종료
-          Navigator.popUntil(context, (route) => route.isFirst);
+          final isUpdate = updateMedicineId == -1;
+          isUpdate
+              ? await _onAddMedicine(context)
+              : await _onUpdateMedicine(context);
         },
         text: '완료',
       ),
     );
   }
+
+  Future<void> _onAddMedicine(BuildContext context) async {
+    for (var alarm in service.alarms) {
+      final result = await notification.addNotification(
+        medicineId: medicineRepository.newId,
+        alarmTimeStr: alarm,
+        title: '$alarm 약 먹을 시간이에요!',
+        body: '$medicineName 복약했다고 알려주세요!',
+      );
+      if (!result) {
+        return showPermissionDenied(context, permission: '알람');
+      }
+    }
+    String? imageFilePath;
+    if (medicineImage != null) {
+      imageFilePath = await saveImageToLocalDirectory(medicineImage!);
+    }
+
+    final medicine = Medicine(
+      id: medicineRepository.newId,
+      name: medicineName,
+      imagePath: imageFilePath,
+      alarms: service.alarms.toList(),
+    );
+    medicineRepository.addMedicine(medicine);
+    // 팝업 전체 종료
+    Navigator.popUntil(context, (route) => route.isFirst);
+  }
+
+  Future<void> _onUpdateMedicine(BuildContext context) async {
+    // 이전 알람 삭제
+    final alarmIds = _updateMedicine.alarms.map(
+      (alarmTime) => notification.alarmId(updateMedicineId, alarmTime),
+    );
+    await notification.deleteMultipleAlarm(alarmIds);
+
+    for (var alarm in service.alarms) {
+      final result = await notification.addNotification(
+        medicineId: updateMedicineId,
+        alarmTimeStr: alarm,
+        title: '$alarm 약 먹을 시간이에요!',
+        body: '$medicineName 복약했다고 알려주세요!',
+      );
+      if (!result) {
+        return showPermissionDenied(context, permission: '알람');
+      }
+    }
+
+    String? imageFilePath = _updateMedicine.imagePath;
+    if (imageFilePath != medicineImage?.path) {
+      // 이전 이미지 삭제
+      if (imageFilePath != null) {
+        deleteImage(imageFilePath);
+      }
+      // 이미지 저장
+      if (medicineImage != null) {
+        imageFilePath = await saveImageToLocalDirectory(medicineImage!);
+      }
+    }
+
+    final medicine = Medicine(
+      id: updateMedicineId,
+      name: medicineName,
+      imagePath: imageFilePath,
+      alarms: service.alarms.toList(),
+    );
+    medicineRepository.updateMedicine(
+        key: _updateMedicine.key, medicine: medicine);
+    // 팝업 전체 종료
+    Navigator.popUntil(context, (route) => route.isFirst);
+  }
+
+  Medicine get _updateMedicine => medicineRepository.medicineBox.values
+      .singleWhere((medicine) => medicine.id == updateMedicineId);
 
   List<Widget> get alarmWidgets {
     final children = <Widget>[];
