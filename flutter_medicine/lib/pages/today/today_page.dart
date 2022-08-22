@@ -7,6 +7,7 @@ import 'package:flutter_medicine/models/medicine_history.dart';
 import 'package:flutter_medicine/pages/today/today_empty_widget.dart';
 import 'package:flutter_medicine/pages/today/today_take_tile.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 
 class TodayPage extends StatelessWidget {
   const TodayPage({Key? key}) : super(key: key);
@@ -54,6 +55,12 @@ class TodayPage extends StatelessWidget {
         ));
       }
     }
+
+    medicineAlarms.sort(
+      (a, b) => DateFormat('HH:mm')
+          .parse(a.alarmTime)
+          .compareTo(DateFormat('HH:mm').parse(b.alarmTime)),
+    );
 
     return Column(
       children: [

@@ -7,6 +7,8 @@ import 'package:flutter_medicine/pages/today/today_take_tile.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
+import '../today/today_history_empty_widget.dart';
+
 class HistoryPage extends StatelessWidget {
   const HistoryPage({Key? key}) : super(key: key);
 
@@ -32,7 +34,10 @@ class HistoryPage extends StatelessWidget {
   }
 
   Widget _buildListView(context, Box<MedicineHistory> historyBox, _) {
-    final histories = historyBox.values.toList().reversed.toList();
+    final histories = [];
+    if (histories.isEmpty) {
+      return const HistoryEmpty();
+    }
     return ListView.builder(
       itemCount: histories.length,
       itemBuilder: (context, index) {

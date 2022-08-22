@@ -234,6 +234,7 @@ class MedicineImageButton extends StatelessWidget {
             : FileImage(
                 File(imagePath!),
               ),
+        child: imagePath == null ? const Icon(CupertinoIcons.alarm_fill) : null,
       ),
     );
   }
