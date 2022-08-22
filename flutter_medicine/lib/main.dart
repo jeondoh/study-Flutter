@@ -3,6 +3,7 @@ import 'package:flutter_medicine/components/medicine_themes.dart';
 import 'package:flutter_medicine/repositories/medicine_hive.dart';
 import 'package:flutter_medicine/repositories/medicine_repository.dart';
 import 'package:flutter_medicine/services/notification_service.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'pages/home_page.dart';
 import 'repositories/medicine_history_repository.dart';
@@ -14,6 +15,8 @@ final historyRepository = MedicineHistoryRepository();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting();
 
   await notification.initializeTimeZone();
   await notification.initializeNotification();

@@ -25,7 +25,7 @@ class BeforeTakeTile extends StatelessWidget {
 
     return Row(
       children: [
-        _MedicineImageButton(medicineAlarm: medicineAlarm),
+        MedicineImageButton(imagePath: medicineAlarm.imagePath),
         const SizedBox(width: smallSpace),
         Expanded(
           child: Column(
@@ -52,6 +52,7 @@ class BeforeTakeTile extends StatelessWidget {
         onTap: () {
           historyRepository.addHistory(MedicineHistory(
             medicineId: medicineAlarm.id,
+            medicineKey: medicineAlarm.key,
             alarmTime: medicineAlarm.alarmTime,
             takeTime: DateTime.now(),
           ));
@@ -80,6 +81,7 @@ class BeforeTakeTile extends StatelessWidget {
         historyRepository.addHistory(
           MedicineHistory(
             medicineId: medicineAlarm.id,
+            medicineKey: medicineAlarm.key,
             alarmTime: medicineAlarm.alarmTime,
             takeTime: takeDateTime,
           ),
@@ -107,7 +109,7 @@ class AfterTakeTile extends StatelessWidget {
       children: [
         Stack(
           children: [
-            _MedicineImageButton(medicineAlarm: medicineAlarm),
+            MedicineImageButton(imagePath: medicineAlarm.imagePath),
             CircleAvatar(
               radius: 40,
               backgroundColor: Colors.green.withOpacity(0.7),
@@ -187,6 +189,7 @@ class AfterTakeTile extends StatelessWidget {
           key: history.key,
           history: MedicineHistory(
             medicineId: medicineAlarm.id,
+            medicineKey: medicineAlarm.key,
             alarmTime: medicineAlarm.alarmTime,
             takeTime: takeDateTime,
           ),
@@ -196,32 +199,32 @@ class AfterTakeTile extends StatelessWidget {
   }
 }
 
-class _MedicineImageButton extends StatelessWidget {
-  const _MedicineImageButton({Key? key, required this.medicineAlarm})
+class MedicineImageButton extends StatelessWidget {
+  const MedicineImageButton({Key? key, required this.imagePath})
       : super(key: key);
 
-  final MedicineAlarm medicineAlarm;
+  final String? imagePath;
 
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
       padding: EdgeInsets.zero,
-      onPressed: medicineAlarm.imagePath == null
+      onPressed: imagePath == null
           ? null
           : () {
               Navigator.push(
                 context,
                 FadePageRoute(
-                  page: ImageDetailPage(medicineAlarm: medicineAlarm),
+                  page: ImageDetailPage(imagePath: imagePath!),
                 ),
               );
             },
       child: CircleAvatar(
         radius: 40,
-        foregroundImage: medicineAlarm.imagePath == null
+        foregroundImage: imagePath == null
             ? null
             : FileImage(
-                File(medicineAlarm.imagePath!),
+                File(imagePath!),
               ),
       ),
     );
