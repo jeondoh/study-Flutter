@@ -55,6 +55,8 @@ class BeforeTakeTile extends StatelessWidget {
             medicineKey: medicineAlarm.key,
             alarmTime: medicineAlarm.alarmTime,
             takeTime: DateTime.now(),
+            imagePath: medicineAlarm.imagePath,
+            name: medicineAlarm.name,
           ));
         },
         title: '지금',
@@ -84,6 +86,8 @@ class BeforeTakeTile extends StatelessWidget {
             medicineKey: medicineAlarm.key,
             alarmTime: medicineAlarm.alarmTime,
             takeTime: takeDateTime,
+            imagePath: medicineAlarm.imagePath,
+            name: medicineAlarm.name,
           ),
         );
       },
@@ -192,6 +196,8 @@ class AfterTakeTile extends StatelessWidget {
             medicineKey: medicineAlarm.key,
             alarmTime: medicineAlarm.alarmTime,
             takeTime: takeDateTime,
+            imagePath: medicineAlarm.imagePath,
+            name: medicineAlarm.name,
           ),
         );
       },
