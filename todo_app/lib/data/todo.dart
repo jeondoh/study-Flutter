@@ -1,10 +1,17 @@
 class Todo {
-  final String title;
-  final String memo;
-  final String category;
-  final int color;
-  final int done;
-  final int date;
+  String title;
+  String memo;
+  String category;
+  int color;
+  int done;
+  int date;
 
-  Todo(this.title, this.memo, this.category, this.color, this.done, this.date);
+  Todo({
+    this.title = "",
+    this.memo = "",
+    this.category = "",
+    this.color = 0,
+    this.done = 0,
+    this.date = 0,
+  });
 }
