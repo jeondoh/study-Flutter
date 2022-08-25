@@ -5,6 +5,7 @@ class Todo {
   int color;
   int done;
   int date;
+  int id;
 
   Todo({
     this.title = "",
@@ -13,5 +14,6 @@ class Todo {
     this.color = 0,
     this.done = 0,
     this.date = 0,
+    this.id = -1,
   });
 }

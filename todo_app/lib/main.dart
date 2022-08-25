@@ -44,6 +44,8 @@ class MyHomePage extends StatefulWidget {
     ),
   ];
 
+  void getTodayTodo() {}
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
