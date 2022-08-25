@@ -97,41 +97,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 undone.length,
                 (index) {
                   Todo t = undone[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Color(t.color),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    padding: const EdgeInsets.all(12),
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              t.title,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              t.done == 0 ? "미완료" : "완료",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        t.done = t.done == 0 ? t.done = 1 : t.done = 0;
+                      });
+                    },
+                    onLongPress: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => TodoWritePage(todo: t),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          t.memo,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
+                      );
+                      setState(() {});
+                    },
+                    child: _TodoCardWidget(t: t),
                   );
                 },
               ),
@@ -155,41 +135,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 done.length,
                 (index) {
                   Todo t = done[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Color(t.color),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    padding: const EdgeInsets.all(12),
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              t.title,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              t.done == 0 ? "미완료" : "완료",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        t.done = t.done == 0 ? t.done = 1 : t.done = 0;
+                      });
+                    },
+                    onLongPress: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => TodoWritePage(todo: t),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          t.memo,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
+                      );
+                      setState(() {});
+                    },
+                    child: _TodoCardWidget(t: t),
                   );
                 },
               ),
@@ -212,6 +172,51 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.more_horiz),
             label: "더보기",
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TodoCardWidget extends StatelessWidget {
+  const _TodoCardWidget({Key? key, required this.t}) : super(key: key);
+
+  final Todo t;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(t.color),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                t.title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                t.done == 0 ? "미완료" : "완료",
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            t.memo,
+            style: const TextStyle(color: Colors.white),
           ),
         ],
       ),

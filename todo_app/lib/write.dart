@@ -12,8 +12,8 @@ class TodoWritePage extends StatefulWidget {
 }
 
 class _TodoWritePageState extends State<TodoWritePage> {
-  final TextEditingController _nameEditingController = TextEditingController();
-  final TextEditingController _memoEditingController = TextEditingController();
+  TextEditingController _nameEditingController = TextEditingController();
+  TextEditingController _memoEditingController = TextEditingController();
   final List<Color> colors = const [
     Color(0xFF80d34f),
     Color(0xFFa794fa),
@@ -25,6 +25,20 @@ class _TodoWritePageState extends State<TodoWritePage> {
   ];
   int colorIndex = 0;
   int categoryIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameEditingController.text = widget.todo.title;
+    _memoEditingController.text = widget.todo.memo;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _nameEditingController.dispose();
+    _memoEditingController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
