@@ -48,6 +48,7 @@ class DatabaseHelper {
       "title": todo.title,
       "date": todo.date,
       "memo": todo.memo,
+      "done": todo.done,
       "color": todo.color,
       "category": todo.category,
     };
@@ -68,12 +69,13 @@ class DatabaseHelper {
     for (var q in queries) {
       todos.add(
         Todo(
-          id: q["id"],
-          title: q["title"],
-          date: q["date"],
-          memo: q["memo"],
-          category: q["category"],
-          color: q["color"],
+          id: int.parse(q["id"].toString()),
+          title: q["title"].toString(),
+          date: int.parse(q["date"].toString()),
+          memo: q["memo"].toString(),
+          category: q["category"].toString(),
+          color: int.parse(q["color"].toString()),
+          done: int.parse(q["done"].toString()),
         ),
       );
     }
@@ -89,12 +91,13 @@ class DatabaseHelper {
     for (var q in queries) {
       todos.add(
         Todo(
-          id: q["id"],
-          title: q["title"],
-          date: q["date"],
-          memo: q["memo"],
-          category: q["category"],
-          color: q["color"],
+          id: int.parse(q["id"].toString()),
+          title: q["title"].toString(),
+          date: int.parse(q["date"].toString()),
+          memo: q["memo"].toString(),
+          category: q["category"].toString(),
+          color: int.parse(q["color"].toString()),
+          done: int.parse(q["done"].toString()),
         ),
       );
     }

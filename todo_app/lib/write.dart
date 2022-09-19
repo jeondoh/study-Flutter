@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/data/database.dart';
 
 import 'data/todo.dart';
 
@@ -12,8 +13,10 @@ class TodoWritePage extends StatefulWidget {
 }
 
 class _TodoWritePageState extends State<TodoWritePage> {
-  TextEditingController _nameEditingController = TextEditingController();
-  TextEditingController _memoEditingController = TextEditingController();
+  final TextEditingController _nameEditingController = TextEditingController();
+  final TextEditingController _memoEditingController = TextEditingController();
+  final dbHelper = DatabaseHelper.instance;
+
   final List<Color> colors = const [
     Color(0xFF80d34f),
     Color(0xFFa794fa),
@@ -46,10 +49,11 @@ class _TodoWritePageState extends State<TodoWritePage> {
       appBar: AppBar(
         actions: [
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               widget.todo.title = _nameEditingController.text;
               widget.todo.memo = _memoEditingController.text;
 
+              await dbHelper.insertTodo(widget.todo);
               Navigator.of(context).pop(widget.todo);
             },
             child: Row(

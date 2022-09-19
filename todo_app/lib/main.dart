@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/data/database.dart';
 import 'package:todo_app/data/todo.dart';
 import 'package:todo_app/data/utils.dart';
 import 'package:todo_app/write.dart';
@@ -18,39 +19,34 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key}) : super(key: key);
-
-  final List<Todo> todos = [
-    Todo(
-      title: "패캠 강의 듣기",
-      memo: "앱 개발 입문",
-      category: "공부",
-      color: Colors.redAccent.value,
-      date: 20220823,
-    ),
-    Todo(
-      title: "헬스",
-      memo: "팔굽혀펴기",
-      category: "운동",
-      color: Colors.blueAccent.value,
-      done: 1,
-      date: 20220828,
-    ),
-  ];
-
-  void getTodayTodo() {}
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final dbHelper = DatabaseHelper.instance;
+
+  late List<Todo> todos = [];
+
+  void getTodayTodo() async {
+    todos = await dbHelper.getTodoByDate(Utils.getFormatTime(DateTime.now()));
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getTodayTodo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,9 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           );
-          setState(() {
-            widget.todos.add(todo);
-          });
+          getTodayTodo();
         },
         child: const Icon(
           Icons.add,
@@ -92,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             );
           } else if (index == 1) {
-            List<Todo> undone = widget.todos.where((t) => t.done == 0).toList();
+            List<Todo> undone = todos.where((t) => t.done == 0).toList();
 
             return Column(
               children: List.generate(
@@ -130,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             );
           } else if (index == 3) {
-            List<Todo> done = widget.todos.where((t) => t.done == 1).toList();
+            List<Todo> done = todos.where((t) => t.done == 1).toList();
 
             return Column(
               children: List.generate(
@@ -144,12 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                     },
                     onLongPress: () async {
-                      await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => TodoWritePage(todo: t),
-                        ),
-                      );
-                      setState(() {});
+                      getTodayTodo();
                     },
                     child: _TodoCardWidget(t: t),
                   );
