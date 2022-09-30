@@ -30,35 +30,44 @@ class BottomNavController extends GetxController {
   void _changePage(int value, {bool hasGesture = true}) {
     pageIndex(value);
     if (!hasGesture) return;
+    if (bottomHistory.isEmpty) {
+      bottomHistory.add(0);
+    }
     if (bottomHistory.last != value) {
       bottomHistory.add(value);
     }
-    print(bottomHistory);
   }
 
   Future<bool> willPopAction() async {
     if (bottomHistory.isEmpty) {
-      showDialog(
-        context: Get.context!,
-        builder: (context) => MessagePopup(
-          title: '시스템',
-          message: '종료하시겠습니까?',
-          okCallback: () {
-            exit(0);
-          },
-          cancelCallback: () {
-            bottomHistory = [0];
-            Get.back();
-          },
-        ),
-      );
+      _setMessagePop(bottomHistory);
       return true;
     } else {
-      var index = bottomHistory.last;
       bottomHistory.removeLast();
+      if (bottomHistory.isEmpty) {
+        _setMessagePop(bottomHistory);
+        return true;
+      }
+      var index = bottomHistory.last;
       changeBottomNav(index, hasGesture: false);
-      print('뒤로가기 ${bottomHistory}');
       return false;
     }
   }
+}
+
+void _setMessagePop(List<int> bottomHistory) {
+  showDialog(
+    context: Get.context!,
+    builder: (context) => MessagePopup(
+      title: '시스템',
+      message: '종료하시겠습니까?',
+      okCallback: () {
+        exit(0);
+      },
+      cancelCallback: () {
+        bottomHistory = [0];
+        Get.back();
+      },
+    ),
+  );
 }
