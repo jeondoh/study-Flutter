@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:insta_clone/src/components/image_data.dart';
 import 'package:insta_clone/src/controller/bottom_nav_controller.dart';
 
+import 'pages/home.dart';
+
 class App extends GetView<BottomNavController> {
   const App({Key? key}) : super(key: key);
 
@@ -12,13 +14,10 @@ class App extends GetView<BottomNavController> {
       onWillPop: controller.willPopAction,
       child: Obx(
         () => Scaffold(
-          appBar: AppBar(
-            title: const Text('Instagram'),
-          ),
           body: IndexedStack(
             index: controller.pageIndex.value,
             children: const [
-              Center(child: Text('HOME')),
+              Home(),
               Center(child: Text('SEARCH')),
               Center(child: Text('UPLOAD')),
               Center(child: Text('ACTIVITY')),
