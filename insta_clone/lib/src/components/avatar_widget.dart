@@ -19,7 +19,7 @@ class AvatarWidget extends StatelessWidget {
     this.size = 65,
   }) : super(key: key);
 
-  Widget type1Widget() {
+  Widget _type1Widget() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
       padding: const EdgeInsets.all(2),
@@ -34,15 +34,15 @@ class AvatarWidget extends StatelessWidget {
         ),
         shape: BoxShape.circle,
       ),
-      child: typeCommWidget(),
+      child: _typeCommWidget(),
     );
   }
 
-  Widget type2Widget() {
-    return typeCommWidget();
+  Widget _type2Widget() {
+    return _typeCommWidget();
   }
 
-  Widget typeCommWidget() {
+  Widget _typeCommWidget() {
     return Container(
       // 그라데이션 이전 흰색 테두리 설정
       padding: const EdgeInsets.all(2),
@@ -64,16 +64,30 @@ class AvatarWidget extends StatelessWidget {
     );
   }
 
+  Widget type3Widget() {
+    return Row(
+      children: [
+        _type1Widget(),
+        Text(
+          nickname ?? '',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     switch (type) {
       case AvatarType.TYPE1:
-        return type1Widget();
+        return _type1Widget();
       case AvatarType.TYPE2:
-        return type2Widget();
+        return _type2Widget();
       case AvatarType.TYPE3:
-        break;
+        return type3Widget();
     }
-    return Container();
   }
 }
