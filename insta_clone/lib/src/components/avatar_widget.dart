@@ -16,7 +16,7 @@ class AvatarWidget extends StatelessWidget {
     required this.thumbPath,
     this.hasStory,
     this.nickname,
-    this.size,
+    this.size = 65,
   }) : super(key: key);
 
   Widget type1Widget() {
@@ -34,22 +34,30 @@ class AvatarWidget extends StatelessWidget {
         ),
         shape: BoxShape.circle,
       ),
-      child: Container(
-        // 그라데이션 이전 흰색 테두리 설정
-        padding: const EdgeInsets.all(2),
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(65),
-          child: SizedBox(
-            width: 65,
-            height: 65,
-            child: CachedNetworkImage(
-              imageUrl: thumbPath,
-              fit: BoxFit.cover,
-            ),
+      child: typeCommWidget(),
+    );
+  }
+
+  Widget type2Widget() {
+    return typeCommWidget();
+  }
+
+  Widget typeCommWidget() {
+    return Container(
+      // 그라데이션 이전 흰색 테두리 설정
+      padding: const EdgeInsets.all(2),
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size!),
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: CachedNetworkImage(
+            imageUrl: thumbPath,
+            fit: BoxFit.cover,
           ),
         ),
       ),
@@ -62,6 +70,7 @@ class AvatarWidget extends StatelessWidget {
       case AvatarType.TYPE1:
         return type1Widget();
       case AvatarType.TYPE2:
+        return type2Widget();
       case AvatarType.TYPE3:
         break;
     }
