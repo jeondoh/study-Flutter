@@ -1,4 +1,9 @@
+import 'dart:math';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:quiver/iterables.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -8,9 +13,22 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
+  List<List<int>> groupBox = [[], [], []];
+  List<int> groupIndex = [0, 0, 0];
+
   @override
   void initState() {
     super.initState();
+    for (var i = 0; i < 100; i++) {
+      var gi = groupIndex.indexOf(min<int>(groupIndex)!);
+      var size = 1;
+      if (gi != 1) {
+        size = Random().nextInt(100) % 2 == 0 ? 1 : 2;
+      }
+      groupBox[gi].add(size);
+      groupIndex[gi] += size;
+    }
+    print(groupBox);
   }
 
   Widget _appbar() {
@@ -50,29 +68,29 @@ class _SearchState extends State<Search> {
     return SingleChildScrollView(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
+        children: List.generate(
+          groupBox.length,
+          (index) => Expanded(
             child: Column(
-              children: [
-                Container(height: 140, color: Colors.red),
-              ],
+              children: List.generate(
+                groupBox[index].length,
+                (jndex) => Container(
+                  height: Get.width * 0.33 * groupBox[index][jndex],
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white),
+                    color: Colors
+                        .primaries[Random().nextInt(Colors.primaries.length)],
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ).toList(),
             ),
           ),
-          Expanded(
-            child: Column(
-              children: [
-                Container(height: 140, color: Colors.blue),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                Container(height: 140, color: Colors.grey),
-              ],
-            ),
-          ),
-        ],
+        ).toList(),
       ),
     );
   }
@@ -87,7 +105,6 @@ class _SearchState extends State<Search> {
             Expanded(
               child: _body(),
             ),
-            // _body(),
           ],
         ),
       ),
