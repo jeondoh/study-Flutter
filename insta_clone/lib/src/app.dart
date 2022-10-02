@@ -4,6 +4,7 @@ import 'package:insta_clone/src/components/image_data.dart';
 import 'package:insta_clone/src/controller/bottom_nav_controller.dart';
 
 import 'pages/home.dart';
+import 'pages/search.dart';
 
 class App extends GetView<BottomNavController> {
   const App({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class App extends GetView<BottomNavController> {
             index: controller.pageIndex.value,
             children: const [
               Home(),
-              Center(child: Text('SEARCH')),
+              Search(),
               Center(child: Text('UPLOAD')),
               Center(child: Text('ACTIVITY')),
               Center(child: Text('MY PAGE')),
