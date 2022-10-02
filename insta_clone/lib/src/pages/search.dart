@@ -23,7 +23,7 @@ class _SearchState extends State<Search> {
       var gi = groupIndex.indexOf(min<int>(groupIndex)!);
       var size = 1;
       if (gi != 1) {
-        size = Random().nextInt(100) % 2 == 0 ? 1 : 2;
+        size = Random().nextInt(100) % 3 == 0 ? 2 : 1;
       }
       groupBox[gi].add(size);
       groupIndex[gi] += size;
@@ -78,8 +78,8 @@ class _SearchState extends State<Search> {
                   height: Get.width * 0.33 * groupBox[index][jndex],
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.white),
-                    color: Colors
-                        .primaries[Random().nextInt(Colors.primaries.length)],
+                    // color: Colors
+                    //     .primaries[Random().nextInt(Colors.primaries.length)],
                   ),
                   child: CachedNetworkImage(
                     imageUrl:
