@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:insta_clone/src/components/image_data.dart';
+
+import '../../controller/bottom_nav_controller.dart';
 
 class SearchFocus extends StatefulWidget {
   const SearchFocus({Key? key}) : super(key: key);
@@ -33,7 +34,6 @@ class _SearchFocusState extends State<SearchFocus>
     return PreferredSize(
       // AppBar().preferredSize.height : AppBar 의 사이즈 만큼
       preferredSize: Size.fromHeight(AppBar().preferredSize.height),
-      // AppBar().preferredSize.height : AppBar 의 사이즈 만큼
       child: Container(
         height: AppBar().preferredSize.height,
         width: Size.infinite.width,
@@ -74,7 +74,8 @@ class _SearchFocusState extends State<SearchFocus>
       appBar: AppBar(
         elevation: 0,
         leading: GestureDetector(
-          onTap: Get.back,
+          // onTap: Get.back,
+          onTap: BottomNavController.to.willPopAction,
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: ImageData(IconsPath.backBtnIcon),

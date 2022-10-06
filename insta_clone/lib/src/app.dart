@@ -17,12 +17,18 @@ class App extends GetView<BottomNavController> {
         () => Scaffold(
           body: IndexedStack(
             index: controller.pageIndex.value,
-            children: const [
-              Home(),
-              Search(),
-              Center(child: Text('UPLOAD')),
-              Center(child: Text('ACTIVITY')),
-              Center(child: Text('MY PAGE')),
+            children: [
+              const Home(),
+              Navigator(
+                key: controller.searchPageNavigationKey,
+                onGenerateRoute: (routeSetting) {
+                  return MaterialPageRoute(
+                      builder: (context) => const Search());
+                },
+              ),
+              const Center(child: Text('UPLOAD')),
+              const Center(child: Text('ACTIVITY')),
+              const Center(child: Text('MY PAGE')),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
