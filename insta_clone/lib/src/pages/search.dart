@@ -30,7 +30,6 @@ class _SearchState extends State<Search> {
       groupBox[gi].add(size);
       groupIndex[gi] += size;
     }
-    print(groupBox);
   }
 
   Widget _appbar() {
