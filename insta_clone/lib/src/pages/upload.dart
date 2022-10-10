@@ -15,6 +15,7 @@ class _UploadState extends State<Upload> {
   List<AssetPathEntity> albums = <AssetPathEntity>[];
   List<AssetEntity> imageList = <AssetEntity>[];
   String headerTitle = '';
+  AssetEntity? selectedImage;
 
   @override
   void initState() {
@@ -67,11 +68,18 @@ class _UploadState extends State<Upload> {
   }
 
   Widget _imagePreview() {
-    var width = MediaQuery.of(context).size.width;
+    double width = MediaQuery.of(context).size.width;
+    ThumbnailSize size = ThumbnailSize(width.toInt(), width.toInt());
+
     return Container(
       width: width,
       height: width,
       color: Colors.grey,
+      child: selectedImage == null
+          ? Container()
+          : _photoWidget(selectedImage!, size, builder: (data) {
+              return Image.memory(data, fit: BoxFit.cover);
+            }),
     );
   }
 
@@ -148,7 +156,19 @@ class _UploadState extends State<Upload> {
       ),
       itemCount: imageList.length,
       itemBuilder: (BuildContext context, int index) {
-        return _photoWidget(imageList[index]);
+        ThumbnailSize size = const ThumbnailSize(200, 200);
+        return _photoWidget(imageList[index], size, builder: (data) {
+          return GestureDetector(
+            onTap: () {
+              selectedImage = imageList[index];
+              update();
+            },
+            child: Opacity(
+              opacity: imageList[index] == selectedImage ? 0.3 : 1,
+              child: Image.memory(data, fit: BoxFit.cover),
+            ),
+          );
+        });
       },
     );
   }
@@ -176,16 +196,13 @@ class _UploadState extends State<Upload> {
     }
   }
 
-  Widget _photoWidget(AssetEntity asset) {
-    ThumbnailSize size = const ThumbnailSize(200, 200);
+  Widget _photoWidget(AssetEntity asset, ThumbnailSize size,
+      {required Widget Function(Uint8List) builder}) {
     return FutureBuilder(
       future: asset.thumbnailDataWithSize(size),
       builder: (_, AsyncSnapshot<Uint8List?> snapshot) {
         if (snapshot.hasData) {
-          return Image.memory(
-            snapshot.data!,
-            fit: BoxFit.cover,
-          );
+          return builder(snapshot.data!);
         }
         return Container();
       },
@@ -202,6 +219,7 @@ class _UploadState extends State<Upload> {
     List<AssetEntity> photos =
         await albums.first.getAssetListPaged(page: 0, size: 30);
     imageList.addAll(photos);
+    selectedImage = imageList.first;
   }
 
   void update() => setState(() {});
