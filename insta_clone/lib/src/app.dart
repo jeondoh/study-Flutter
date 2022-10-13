@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:insta_clone/src/components/image_data.dart';
 import 'package:insta_clone/src/controller/bottom_nav_controller.dart';
 
+import 'pages/active_history.dart';
 import 'pages/home.dart';
 import 'pages/search.dart';
 
@@ -26,8 +27,8 @@ class App extends GetView<BottomNavController> {
                       builder: (context) => const Search());
                 },
               ),
-              const Center(child: Text('UPLOAD')),
-              const Center(child: Text('ACTIVITY')),
+              Container(),
+              const ActiveHistory(),
               const Center(child: Text('MY PAGE')),
             ],
           ),
