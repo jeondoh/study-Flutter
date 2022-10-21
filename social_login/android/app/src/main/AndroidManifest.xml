@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.social.social_login">
+    package="com.jstorm.dappRaccoon">
    <application
         android:label="social_login"
         android:name="${applicationName}"
