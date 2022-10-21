@@ -70,3 +70,5 @@ lib/generated_plugin_registrant.dart
 .idea/
 
 GoogleService-Info.plist
+
+.DS_Store
