@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:social_login/LoginController.dart';
+
+import 'UserStruct.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -13,36 +15,36 @@ class ProfilePage extends StatelessWidget {
     return _buildBody();
   }
 
-  Future<void> _handleSignIn() async {
-    try {
-      await _controller.getGoogleSinIn.signIn();
-    } catch (error) {
-      print(error);
-    }
+  Future<void> _handleGoogleSignIn() async {
+    await _controller.setGoogleSignIn();
+  }
+
+  Future<void> _handleAppleSignIn() async {
+    await _controller.setAppleSignIn();
   }
 
   Future<void> _handleSignOut() async {
-    await _controller.getGoogleSinIn.signOut();
-    // await _controller.getGoogleSinIn.disconnect();
+    await _controller.signOut();
   }
 
   Widget _buildBody() {
     return Center(
       child: GetBuilder<LoginController>(
         builder: (_) {
-          GoogleSignInAccount? user = _controller.getCurrentUser;
-          if (user == null) {
+          UserStruct user = _controller.getUser;
+          print(user);
+          if (user.getSocial == -1) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("★판돈 가져오기★"),
-                ElevatedButton(
-                  onPressed: _handleSignIn,
-                  child: const Text('구우글 로그인'),
+                const Text("애플은 ★소중★하니까"),
+                const Text("로고 박음"),
+                SignInWithAppleButton(
+                  onPressed: _handleAppleSignIn,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('앺플 로그인'),
+                  onPressed: _handleGoogleSignIn,
+                  child: const Text('구으글 로그인'),
                 ),
               ],
             );
@@ -50,13 +52,8 @@ class ProfilePage extends StatelessWidget {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ListTile(
-                  leading: GoogleUserCircleAvatar(
-                    identity: user,
-                  ),
-                  title: Text(user.displayName ?? ''),
-                  subtitle: Text(user.email),
-                ),
+                Text(user.getEmail),
+                Text(user.getAuthCode ?? ''),
                 const Text('★ 판돈 1000만원 획득 ★'),
                 ElevatedButton(
                   onPressed: _handleSignOut,
