@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:insta_clone/src/components/image_data.dart';
 import 'package:insta_clone/src/controller/bottom_nav_controller.dart';
+import 'package:insta_clone/src/pages/mypage.dart';
 
 import 'pages/active_history.dart';
 import 'pages/home.dart';
@@ -29,7 +30,7 @@ class App extends GetView<BottomNavController> {
               ),
               Container(),
               const ActiveHistory(),
-              const Center(child: Text('MY PAGE')),
+              const MyPage(),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
