@@ -2,8 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:insta_clone/src/components/avatar_widget.dart';
 import 'package:insta_clone/src/components/image_data.dart';
 
-class MyPage extends StatelessWidget {
+import 'user_card.dart';
+
+class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
+
+  @override
+  State<MyPage> createState() => _MyPageState();
+}
+
+class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
+  late TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 2, vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +53,56 @@ class MyPage extends StatelessWidget {
           children: [
             _information(),
             _menu(),
+            _discorverPeople(),
+            const SizedBox(height: 20),
+            _tabMenu(),
+            _tabView(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _discorverPeople() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text(
+                'Discover People',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: Colors.black,
+                ),
+              ),
+              Text(
+                'See All',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w500,
+                ),
+              )
+            ],
+          ),
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: List.generate(
+                10,
+                (index) => UserCard(
+                      userId: '개남$index',
+                      description: '개남e$index님이 팔로우합니다.',
+                    )).toList(),
+          ),
+        ),
+      ],
     );
   }
 
@@ -139,5 +201,41 @@ class MyPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _tabMenu() {
+    return TabBar(
+      controller: tabController,
+      indicatorColor: Colors.black,
+      indicatorWeight: 1,
+      tabs: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: ImageData(IconsPath.gridViewOn),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: ImageData(IconsPath.gridViewOff),
+        ),
+      ],
+    );
+  }
+
+  Widget _tabView() {
+    return GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: 100,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          childAspectRatio: 1,
+          mainAxisSpacing: 1,
+          crossAxisSpacing: 1,
+        ),
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            color: Colors.grey,
+          );
+        });
   }
 }
