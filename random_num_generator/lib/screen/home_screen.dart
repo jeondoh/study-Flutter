@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:random_num_generator/constant/color.dart';
-import 'package:random_num_generator/screen/settings_screen.dart';
+
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int maxNumber = 1000;
   List<int> randomNumbers = [
     123,
     456,
@@ -28,7 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _Header(),
+              _Header(
+                onPressed: onSettingsPop,
+              ),
               _Body(randomNumbers: randomNumbers),
               _Footer(onPressed: onRandomNumberGenerate),
             ],
@@ -38,12 +42,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void onSettingsPop() async {
+    final result = await Navigator.of(context).push<int>(
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return const SettingsScreen();
+        },
+      ),
+    );
+    setState(() {
+      maxNumber = result ?? maxNumber;
+    });
+  }
+
   void onRandomNumberGenerate() {
     final rand = Random();
     final Set<int> newNumbers = {};
 
     while (newNumbers.length != 3) {
-      final number = rand.nextInt(1000);
+      final number = rand.nextInt(maxNumber);
       newNumbers.add(number);
     }
     setState(() {
@@ -53,7 +70,11 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({Key? key}) : super(key: key);
+  final VoidCallback onPressed;
+  const _Header({
+    Key? key,
+    required this.onPressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -69,15 +90,7 @@ class _Header extends StatelessWidget {
           ),
         ),
         IconButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return const SettingsScreen();
-                },
-              ),
-            );
-          },
+          onPressed: onPressed,
           icon: const Icon(Icons.settings),
           color: RED_COLOR,
         ),
