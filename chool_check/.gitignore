@@ -70,5 +70,5 @@ lib/generated_plugin_registrant.dart
 .idea/
 
 # screat key
-styles.xml
+secrets.xml
 Storage.swift
