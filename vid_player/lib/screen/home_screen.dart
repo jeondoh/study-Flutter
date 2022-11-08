@@ -1,24 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../component/custom_video_player.dart';
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  XFile? video;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: getBoxDecoration(),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            _Logo(),
-            SizedBox(height: 30.0),
-            _AppName(),
-          ],
-        ),
+      body: video == null ? renderEmpty() : renderVideo(),
+    );
+  }
+
+  Widget renderVideo() {
+    return Center(
+      child: CustomVideoPlayer(
+        video: video!,
       ),
     );
+  }
+
+  Widget renderEmpty() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      decoration: getBoxDecoration(),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _Logo(onTap: onLogoTap),
+          const SizedBox(height: 30.0),
+          const _AppName(),
+        ],
+      ),
+    );
+  }
+
+  void onLogoTap() async {
+    final video = await ImagePicker().pickVideo(source: ImageSource.gallery);
+    if (video != null) {
+      setState(() {
+        this.video = video;
+      });
+    }
   }
 
   BoxDecoration getBoxDecoration() {
@@ -36,11 +67,16 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _Logo extends StatelessWidget {
-  const _Logo({Key? key}) : super(key: key);
+  final VoidCallback onTap;
+
+  const _Logo({Key? key, required this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset('asset/image/logo.png');
+    return GestureDetector(
+      onTap: onTap,
+      child: Image.asset('asset/image/logo.png'),
+    );
   }
 }
 
