@@ -6,9 +6,14 @@ class CustomTextField extends StatelessWidget {
   final String label;
   // true - 시간 / false - 내용
   final bool isTime;
+  final FormFieldSetter<String> onSaved;
 
-  const CustomTextField({Key? key, required this.label, required this.isTime})
-      : super(key: key);
+  const CustomTextField({
+    Key? key,
+    required this.label,
+    required this.isTime,
+    required this.onSaved,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +35,7 @@ class CustomTextField extends StatelessWidget {
 
   Widget renderTextField() {
     return TextFormField(
+      onSaved: onSaved,
       validator: (String? val) {
         if (val == null || val.isEmpty) {
           return '값을 입력해주세요.';
