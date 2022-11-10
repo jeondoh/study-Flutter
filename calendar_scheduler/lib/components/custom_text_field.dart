@@ -60,6 +60,7 @@ class CustomTextField extends StatelessWidget {
         border: InputBorder.none,
         filled: true,
         fillColor: Colors.grey[300],
+        suffixText: isTime ? '시' : '',
       ),
     );
   }
