@@ -8,9 +8,13 @@ import 'custom_text_field.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
   final DateTime selectedDate;
+  final int? scheduleId;
 
-  const ScheduleBottomSheet({Key? key, required this.selectedDate})
-      : super(key: key);
+  const ScheduleBottomSheet({
+    Key? key,
+    required this.selectedDate,
+    this.scheduleId,
+  }) : super(key: key);
 
   @override
   State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
@@ -32,58 +36,92 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
-      child: SafeArea(
-        child: Container(
-          height: MediaQuery.of(context).size.height / 2 + bottomInset,
-          color: Colors.white,
-          child: Padding(
-            padding: EdgeInsets.only(bottom: bottomInset),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8, top: 16),
-              child: Form(
-                key: formKey,
-                // autovalidateMode: AutovalidateMode.always,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _Time(onStartSaved: (String? val) {
-                      startTime = int.parse(val!);
-                    }, onEndSaved: (String? val) {
-                      endTime = int.parse(val!);
-                    }),
-                    const SizedBox(height: 16.0),
-                    _Content(onSaved: (String? val) {
-                      content = val;
-                    }),
-                    const SizedBox(height: 16.0),
-                    FutureBuilder<List<CategoryColor>>(
-                        future: GetIt.I<LocalDatabase>().getCategoryColors(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData &&
-                              selectedColorId == null &&
-                              snapshot.data!.isNotEmpty) {
-                            selectedColorId = snapshot.data![0].id;
-                          }
+      child: FutureBuilder<Schedule>(
+          future: widget.scheduleId == null
+              ? null
+              : GetIt.I<LocalDatabase>().getScheduleById(widget.scheduleId!),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('스케쥴을 불러올수 없습니다.'),
+              );
+            }
 
-                          return _ColorPicker(
-                            colors: snapshot.hasData ? snapshot.data! : [],
-                            selectedColorId: selectedColorId,
-                            colorIdSetter: (int id) {
-                              setState(() {
-                                selectedColorId = id;
-                              });
+            if (snapshot.connectionState != ConnectionState.none &&
+                !snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (!snapshot.hasError && startTime == null) {
+              startTime = snapshot.data!.startTime;
+              endTime = snapshot.data!.endTime;
+              content = snapshot.data!.content;
+              selectedColorId = snapshot.data!.colorId;
+            }
+
+            return SafeArea(
+              child: Container(
+                height: MediaQuery.of(context).size.height / 2 + bottomInset,
+                color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: bottomInset),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 8, top: 16),
+                    child: Form(
+                      key: formKey,
+                      // autovalidateMode: AutovalidateMode.always,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _Time(
+                            onStartSaved: (String? val) {
+                              startTime = int.parse(val!);
                             },
-                          );
-                        }),
-                    const SizedBox(height: 8.0),
-                    _SaveBtn(onPressed: onSavePressed),
-                  ],
+                            onEndSaved: (String? val) {
+                              endTime = int.parse(val!);
+                            },
+                            startInitialValue: startTime?.toString() ?? '',
+                            endInitialValue: endTime?.toString() ?? '',
+                          ),
+                          const SizedBox(height: 16.0),
+                          _Content(
+                            onSaved: (String? val) {
+                              content = val;
+                            },
+                            initialValue: content ?? '',
+                          ),
+                          const SizedBox(height: 16.0),
+                          FutureBuilder<List<CategoryColor>>(
+                              future:
+                                  GetIt.I<LocalDatabase>().getCategoryColors(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData &&
+                                    selectedColorId == null &&
+                                    snapshot.data!.isNotEmpty) {
+                                  selectedColorId = snapshot.data![0].id;
+                                }
+
+                                return _ColorPicker(
+                                  colors:
+                                      snapshot.hasData ? snapshot.data! : [],
+                                  selectedColorId: selectedColorId,
+                                  colorIdSetter: (int id) {
+                                    setState(() {
+                                      selectedColorId = id;
+                                    });
+                                  },
+                                );
+                              }),
+                          const SizedBox(height: 8.0),
+                          _SaveBtn(onPressed: onSavePressed),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
+            );
+          }),
     );
   }
 
@@ -94,15 +132,29 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
-      final key = await GetIt.I<LocalDatabase>().createSchedule(
-        SchedulesCompanion(
-          date: Value(widget.selectedDate),
-          startTime: Value(startTime!),
-          endTime: Value(endTime!),
-          content: Value(content!),
-          colorId: Value(selectedColorId!),
-        ),
-      );
+      if (widget.scheduleId == null) {
+        await GetIt.I<LocalDatabase>().createSchedule(
+          SchedulesCompanion(
+            date: Value(widget.selectedDate),
+            startTime: Value(startTime!),
+            endTime: Value(endTime!),
+            content: Value(content!),
+            colorId: Value(selectedColorId!),
+          ),
+        );
+      } else {
+        await GetIt.I<LocalDatabase>().updateScheduleById(
+          widget.scheduleId!,
+          SchedulesCompanion(
+            date: Value(widget.selectedDate),
+            startTime: Value(startTime!),
+            endTime: Value(endTime!),
+            content: Value(content!),
+            colorId: Value(selectedColorId!),
+          ),
+        );
+      }
+
       Navigator.of(context).pop();
     }
   }
@@ -111,11 +163,15 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
 class _Time extends StatelessWidget {
   final FormFieldSetter<String> onStartSaved;
   final FormFieldSetter<String> onEndSaved;
+  final String startInitialValue;
+  final String endInitialValue;
 
   const _Time({
     Key? key,
     required this.onStartSaved,
     required this.onEndSaved,
+    required this.startInitialValue,
+    required this.endInitialValue,
   }) : super(key: key);
 
   @override
@@ -126,6 +182,7 @@ class _Time extends StatelessWidget {
             child: CustomTextField(
           label: '시작 시간',
           isTime: true,
+          initialValue: startInitialValue,
           onSaved: onStartSaved,
         )),
         const SizedBox(width: 16.0),
@@ -133,6 +190,7 @@ class _Time extends StatelessWidget {
             child: CustomTextField(
           label: '마감 시간',
           isTime: true,
+          initialValue: endInitialValue,
           onSaved: onEndSaved,
         )),
       ],
@@ -142,14 +200,17 @@ class _Time extends StatelessWidget {
 
 class _Content extends StatelessWidget {
   final FormFieldSetter<String> onSaved;
+  final String initialValue;
 
-  const _Content({Key? key, required this.onSaved}) : super(key: key);
+  const _Content({Key? key, required this.onSaved, required this.initialValue})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: CustomTextField(
         label: '내용',
+        initialValue: initialValue,
         isTime: false,
         onSaved: onSaved,
       ),
