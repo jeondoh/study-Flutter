@@ -1,5 +1,7 @@
 import 'package:calendar_scheduler/const/colors.dart';
+import 'package:calendar_scheduler/database/drift_database.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import 'custom_text_field.dart';
 
@@ -16,6 +18,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   String? content;
   int? startTime;
   int? endTime;
+  int? selectedColorId;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +52,25 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                       content = val;
                     }),
                     const SizedBox(height: 16.0),
-                    const _ColorPicker(),
+                    FutureBuilder<List<CategoryColor>>(
+                        future: GetIt.I<LocalDatabase>().getCategoryColors(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData &&
+                              selectedColorId == null &&
+                              snapshot.data!.isNotEmpty) {
+                            selectedColorId = snapshot.data![0].id;
+                          }
+
+                          return _ColorPicker(
+                            colors: snapshot.hasData ? snapshot.data! : [],
+                            selectedColorId: selectedColorId!,
+                            colorIdSetter: (int id) {
+                              setState(() {
+                                selectedColorId = id;
+                              });
+                            },
+                          );
+                        }),
                     const SizedBox(height: 8.0),
                     _SaveBtn(onPressed: onSavePressed),
                   ],
@@ -121,31 +142,51 @@ class _Content extends StatelessWidget {
   }
 }
 
+typedef ColorIdSetter = void Function(int id);
+
 class _ColorPicker extends StatelessWidget {
-  const _ColorPicker({Key? key}) : super(key: key);
+  final List<CategoryColor> colors;
+  final int selectedColorId;
+  final ColorIdSetter colorIdSetter;
+
+  const _ColorPicker({
+    Key? key,
+    required this.colors,
+    required this.selectedColorId,
+    required this.colorIdSetter,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Wrap(
       spacing: 8.0,
       runSpacing: 10.0,
-      children: [
-        renderColor(Colors.red),
-        renderColor(Colors.orange),
-        renderColor(Colors.yellow),
-        renderColor(Colors.green),
-        renderColor(Colors.blue),
-        renderColor(Colors.indigo),
-        renderColor(Colors.purple),
-      ],
+      children: colors
+          .map(
+            (e) => GestureDetector(
+              onTap: () {
+                colorIdSetter(e.id);
+              },
+              child: renderColor(e, selectedColorId == e.id),
+            ),
+          )
+          .toList(),
     );
   }
 
-  Widget renderColor(Color color) {
+  Widget renderColor(CategoryColor color, bool isSelected) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: color,
+        color: Color(
+          int.parse('FF${color.hexCode}', radix: 16),
+        ),
+        border: isSelected
+            ? Border.all(
+                color: Colors.black,
+                width: 4.0,
+              )
+            : null,
       ),
       width: 32,
       height: 32,
