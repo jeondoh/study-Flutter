@@ -2,6 +2,7 @@ import 'package:calendar_scheduler/components/schedule_card.dart';
 import 'package:calendar_scheduler/components/today_banner.dart';
 import 'package:calendar_scheduler/const/colors.dart';
 import 'package:calendar_scheduler/database/drift_database.dart';
+import 'package:calendar_scheduler/model/schedule_with_color.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -35,10 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
               focusedDay: focusedDay,
             ),
             const SizedBox(height: 8.0),
-            TodayBanner(
-              selectedDay: selectedDay,
-              scheduleCount: 3,
-            ),
+            TodayBanner(selectedDay: selectedDay),
             const SizedBox(height: 8.0),
             _ScheduleList(selectedDate: selectedDay),
           ],
@@ -81,27 +79,37 @@ class _ScheduleList extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: StreamBuilder<List<Schedule>>(
-            stream: GetIt.I<LocalDatabase>().watchSchedules(),
+        child: StreamBuilder<List<ScheduleWithColor>>(
+            stream: GetIt.I<LocalDatabase>().watchSchedules(selectedDate),
             builder: (context, snapshot) {
-              List<Schedule> schedules = [];
-              if (snapshot.hasData) {
-                schedules = snapshot.data!
-                    .where((element) => element.date == selectedDate)
-                    .toList();
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.hasData && snapshot.data!.isEmpty) {
+                return const Center(
+                  child: Text('스케쥴이 없습니다.'),
+                );
               }
 
               return ListView.separated(
-                itemCount: 3,
+                itemCount: snapshot.data!.length,
                 separatorBuilder: (context, index) {
                   return const SizedBox(height: 8.0);
                 },
                 itemBuilder: (context, index) {
+                  final scheduleWithColor = snapshot.data![index];
+
                   return ScheduleCard(
-                    startTime: 8,
-                    endTime: 12,
-                    content: 'programming study',
-                    color: Colors.red,
+                    startTime: scheduleWithColor.schedule.startTime,
+                    endTime: scheduleWithColor.schedule.endTime,
+                    content: scheduleWithColor.schedule.content,
+                    color: Color(
+                      int.parse(
+                        'FF${scheduleWithColor.categoryColor.hexCode}',
+                        radix: 16,
+                      ),
+                    ),
                   );
                 },
               );
