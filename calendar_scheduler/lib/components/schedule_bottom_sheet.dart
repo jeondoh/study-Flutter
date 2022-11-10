@@ -3,8 +3,15 @@ import 'package:flutter/material.dart';
 
 import 'custom_text_field.dart';
 
-class ScheduleBottomSheet extends StatelessWidget {
+class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({Key? key}) : super(key: key);
+
+  @override
+  State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
+}
+
+class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
+  final GlobalKey<FormState> formKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -22,23 +29,34 @@ class ScheduleBottomSheet extends StatelessWidget {
             padding: EdgeInsets.only(bottom: bottomInset),
             child: Padding(
               padding: const EdgeInsets.only(left: 8, right: 8, top: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  _Time(),
-                  SizedBox(height: 16.0),
-                  _Content(),
-                  SizedBox(height: 16.0),
-                  _ColorPicker(),
-                  SizedBox(height: 8.0),
-                  _SaveBtn(),
-                ],
+              child: Form(
+                key: formKey,
+                autovalidateMode: AutovalidateMode.always,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const _Time(),
+                    const SizedBox(height: 16.0),
+                    const _Content(),
+                    const SizedBox(height: 16.0),
+                    const _ColorPicker(),
+                    const SizedBox(height: 8.0),
+                    _SaveBtn(onPressed: onSavePressed),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  void onSavePressed() {
+    if (formKey.currentState == null) {
+      return;
+    }
+    if (formKey.currentState!.validate()) {}
   }
 }
 
@@ -101,12 +119,14 @@ class _ColorPicker extends StatelessWidget {
 }
 
 class _SaveBtn extends StatelessWidget {
-  const _SaveBtn({Key? key}) : super(key: key);
+  final VoidCallback onPressed;
+
+  const _SaveBtn({Key? key, required this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: onPressed,
       style: ElevatedButton.styleFrom(primary: PRIMARY_COLOR),
       child: Row(
         children: const [
