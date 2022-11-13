@@ -4,8 +4,9 @@ import 'screen/home_screen.dart';
 
 void main() {
   runApp(
-    const MaterialApp(
-      home: HomeScreen(),
+    MaterialApp(
+      theme: ThemeData(fontFamily: 'sunflower'),
+      home: const HomeScreen(),
     ),
   );
 }
