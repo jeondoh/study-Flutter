@@ -2,6 +2,7 @@ import 'package:dusty_dust/components/category_card.dart';
 import 'package:dusty_dust/const/colors.dart';
 import 'package:flutter/material.dart';
 
+import '../components/hourly_card.dart';
 import '../components/main_app_bar.dart';
 import '../components/main_drawer.dart';
 
@@ -21,8 +22,10 @@ class HomeScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+              children: const [
                 CategoryCard(),
+                SizedBox(height: 16.0),
+                HourlyCard(),
               ],
             ),
           ),
