@@ -1,13 +1,11 @@
-import 'package:dio/dio.dart';
 import 'package:dusty_dust/components/category_card.dart';
 import 'package:dusty_dust/const/colors.dart';
-import 'package:dusty_dust/const/data.dart';
+import 'package:dusty_dust/repository/stat_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../components/hourly_card.dart';
 import '../components/main_app_bar.dart';
 import '../components/main_drawer.dart';
-import '../model/stat_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -24,24 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   fetchData() async {
-    final response = await Dio().get(
-      'http://apis.data.go.kr/B552584/ArpltnStatsSvc/getCtprvnMesureLIst',
-      queryParameters: {
-        'serviceKey': serviceKey,
-        'returnType': 'json',
-        'numberOfRows': 30,
-        'pageNo': 1,
-        'itemCode': 'PM10',
-        'dataGubun': 'HOUR',
-        'searchCondition': 'WEEK',
-      },
-    );
-
-    print(
-      response.data['response']['body']['items'].map(
-        (item) => StatModel.fromJson(json: item),
-      ),
-    );
+    final statModels = await StatRepository.fetchData();
+    print(statModels);
   }
 
   @override
