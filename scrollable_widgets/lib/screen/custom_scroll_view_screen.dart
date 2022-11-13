@@ -11,10 +11,7 @@ class CustomScrollViewScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // Appbar도 리스트의 일부가 되어 스크롤시 사라짐
-          const SliverAppBar(
-            title: Text('CustomScrollViewScreen'),
-          ),
+          renderSliverAppBar(),
           renderSliverGridBuilder(),
         ],
       ),
@@ -43,6 +40,35 @@ class CustomScrollViewScreen extends StatelessWidget {
     );
   }
 
+  // -------------------- SliverAppBar -------------------- //
+  SliverAppBar renderSliverAppBar() {
+    return SliverAppBar(
+      // floating : 스크롤 했을때 리스트의 중간에도 Appbar가 내려오게 할 수 있음
+      floating: true,
+      // pinned : Appbar 고정여부
+      pinned: false,
+      // snap : floating이 true일때 사용
+      // appbar가 스크롤시 자연스럽게 보이고 가려짐(자석효과)
+      snap: true,
+      // 맨 위에서 한계 이상으로 스크롤 했을때
+      // 남는 공간을 차지
+      stretch: true,
+      // appbar height
+      expandedHeight: 200,
+      // appbar가 닫히는 구간 설정
+      collapsedHeight: 150,
+      flexibleSpace: FlexibleSpaceBar(
+        title: const Text("FlexibleSpace"),
+        background: Image.asset(
+          'asset/img/images.jpg',
+          fit: BoxFit.cover,
+        ),
+      ),
+      title: const Text('CustomScrollViewScreen'),
+    );
+  }
+
+  // -------------------- SliverGrid -------------------- //
   // ListView 기본 생성자와 비슷함
   SliverList renderChildSliverList() {
     return SliverList(
