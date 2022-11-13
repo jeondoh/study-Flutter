@@ -1,3 +1,4 @@
+import 'package:dusty_dust/components/category_card.dart';
 import 'package:dusty_dust/const/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -9,13 +10,22 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: primaryColor,
       // drawer : 왼쪽 메뉴 생성
-      drawer: MainDrawer(),
+      drawer: const MainDrawer(),
       body: CustomScrollView(
         slivers: [
-          MainAppBar(),
+          const MainAppBar(),
+          // sliver 안에 일반 위젯을 넣을 수 있음
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CategoryCard(),
+              ],
+            ),
+          ),
         ],
       ),
     );
