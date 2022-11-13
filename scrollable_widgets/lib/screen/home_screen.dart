@@ -5,6 +5,8 @@ import 'package:scrollable_widgets/screen/reorderable_list_view_screen.dart';
 
 import 'custom_scroll_view_screen.dart';
 import 'list_view_screen.dart';
+import 'refresh_indicator.dart';
+import 'scrollbar_screen.dart';
 import 'single_child_scroll_view_screen.dart';
 
 class ScreenModel {
@@ -38,6 +40,14 @@ class HomeScreen extends StatelessWidget {
     ScreenModel(
       builder: (_) => CustomScrollViewScreen(),
       name: 'CustomScrollViewScreen',
+    ),
+    ScreenModel(
+      builder: (_) => ScrollBarScreen(),
+      name: 'ScrollBarScreen',
+    ),
+    ScreenModel(
+      builder: (_) => RefreshIndicatorScreen(),
+      name: 'RefreshIndicatorScreen',
     ),
   ];
 
