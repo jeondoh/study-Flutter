@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:order_app/common/const/colors.dart';
+import 'package:order_app/common/const/data.dart';
 import 'package:order_app/common/layout/default_layout.dart';
 
 import '../../common/components/custom_text_form_field.dart';
@@ -17,6 +19,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final storage = const FlutterSecureStorage();
   String username = '';
   String password = '';
 
@@ -82,9 +85,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     );
 
+                    final accessToken = resp.data['accessToken'];
+                    final refreshToken = resp.data['refreshToken'];
+                    await storage.write(
+                      key: ACCESS_TOKEN_KEY,
+                      value: accessToken,
+                    );
+                    await storage.write(
+                      key: REFRESH_TOKEN_KEY,
+                      value: refreshToken,
+                    );
+
                     Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const RootTab()));
-                    print(resp.data);
+                      MaterialPageRoute(
+                        builder: (_) => const RootTab(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(primary: PRIMARY_COLOR),
                   child: const Text('로그인'),
