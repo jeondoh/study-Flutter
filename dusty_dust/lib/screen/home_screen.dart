@@ -1,5 +1,7 @@
 import 'package:dusty_dust/components/category_card.dart';
 import 'package:dusty_dust/const/colors.dart';
+import 'package:dusty_dust/const/status_level.dart';
+import 'package:dusty_dust/model/stat_model.dart';
 import 'package:dusty_dust/repository/stat_repository.dart';
 import 'package:flutter/material.dart';
 
@@ -15,15 +17,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
-
-  fetchData() async {
+  Future<List<StatModel>> fetchData() async {
     final statModels = await StatRepository.fetchData();
-    print(statModels);
+    return statModels;
   }
 
   @override
@@ -32,22 +28,44 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: primaryColor,
       // drawer : 왼쪽 메뉴 생성
       drawer: const MainDrawer(),
-      body: CustomScrollView(
-        slivers: [
-          const MainAppBar(),
-          // sliver 안에 일반 위젯을 넣을 수 있음
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: const [
-                CategoryCard(),
-                SizedBox(height: 16.0),
-                HourlyCard(),
+      body: FutureBuilder<List<StatModel>>(
+          future: fetchData(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('Error!!'),
+              );
+            }
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            List<StatModel> stats = snapshot.data!;
+            StatModel recentStat = stats[0];
+            final status = statusLevel
+                .where((element) => element.minFineDust < recentStat.seoul)
+                .last;
+
+            return CustomScrollView(
+              slivers: [
+                MainAppBar(
+                  stat: recentStat,
+                  status: status,
+                ),
+                // sliver 안에 일반 위젯을 넣을 수 있음
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: const [
+                      CategoryCard(),
+                      SizedBox(height: 16.0),
+                      HourlyCard(),
+                    ],
+                  ),
+                ),
               ],
-            ),
-          ),
-        ],
-      ),
+            );
+          }),
     );
   }
 }
