@@ -1,15 +1,14 @@
-import 'package:dusty_dust/components/category_card.dart';
-import 'package:dusty_dust/model/stat_and_status_model.dart';
+import 'package:dusty_dust/container/category_card.dart';
 import 'package:dusty_dust/model/stat_model.dart';
 import 'package:dusty_dust/repository/stat_repository.dart';
 import 'package:dusty_dust/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../components/hourly_card.dart';
 import '../components/main_app_bar.dart';
 import '../components/main_drawer.dart';
 import '../const/regions.dart';
+import '../container/hourly_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -36,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Future<Map<ItemCode, List<StatModel>>> fetchData() async {
+  Future<void> fetchData() async {
     List<Future> futures = [];
 
     // 동시요청
@@ -58,15 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
         box.put(stat.dataTime.toString(), stat);
       }
     }
-    return ItemCode.values.fold<Map<ItemCode, List<StatModel>>>({},
-        (previousValue, itemCode) {
-      final box = Hive.box<StatModel>(itemCode.name);
-      previousValue.addAll({
-        itemCode: box.values.toList(),
-      });
-
-      return previousValue;
-    });
   }
 
   scrollListener() {
@@ -80,46 +70,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<ItemCode, List<StatModel>>>(
-      future: fetchData(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Scaffold(
-            body: Center(
-              child: Text('Error!!'),
-            ),
-          );
-        }
-        if (!snapshot.hasData) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-
-        Map<ItemCode, List<StatModel>> stats = snapshot.data!;
-        StatModel pm10RecentStat = stats[ItemCode.PM10]![0];
-
+    return ValueListenableBuilder(
+      valueListenable: Hive.box<StatModel>(ItemCode.PM10.name).listenable(),
+      builder: (context, box, widget) {
+        final recentStat = box.values.toList().last;
         // 미세먼지 최근 데이터의 현재 상태
         final status = DataUtils.getStatusFromItemCodeAndValue(
-          value: pm10RecentStat.seoul,
+          value: recentStat.getLevelFromRegion(region),
           itemCode: ItemCode.PM10,
         );
-
-        final ssModel = stats.keys.map((key) {
-          final value = stats[key]!;
-          final stat = value[0];
-
-          return StatAndStatusModel(
-            itemCode: key,
-            status: DataUtils.getStatusFromItemCodeAndValue(
-              value: stat.getLevelFromRegion(region),
-              itemCode: key,
-            ),
-            stat: stat,
-          );
-        }).toList();
 
         return Scaffold(
           // drawer : 왼쪽 메뉴 생성
@@ -142,9 +101,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 MainAppBar(
                   isExpanded: isExpanded,
                   region: region,
-                  stat: pm10RecentStat,
+                  stat: recentStat,
                   status: status,
-                  dateTime: pm10RecentStat.dataTime,
+                  dateTime: recentStat.dataTime,
                 ),
                 // sliver 안에 일반 위젯을 넣을 수 있음
                 SliverToBoxAdapter(
@@ -154,23 +113,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       CategoryCard(
                         darkColor: status.darkColor,
                         lightColor: status.lightColor,
-                        models: ssModel,
                         region: region,
                       ),
                       const SizedBox(height: 16.0),
-                      ...stats.keys.map(
+                      ...ItemCode.values.map(
                         (itemCode) {
-                          final stat = stats[itemCode]!;
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16.0),
                             child: HourlyCard(
-                              category: DataUtils.getItemCodeKrString(
-                                itemCode: itemCode,
-                              ),
                               region: region,
-                              stats: stat,
                               darkColor: status.darkColor,
                               lightColor: status.lightColor,
+                              itemCode: itemCode,
                             ),
                           );
                         },
