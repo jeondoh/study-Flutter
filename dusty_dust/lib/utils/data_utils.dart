@@ -27,7 +27,7 @@ class DataUtils {
     }
   }
 
-  static String itemCodeKrString({
+  static String getItemCodeKrString({
     required ItemCode itemCode,
   }) {
     switch (itemCode) {
@@ -69,3 +69,4 @@ class DataUtils {
     }).last;
   }
 }
+종류별 통계 데
