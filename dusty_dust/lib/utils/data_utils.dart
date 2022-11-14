@@ -69,4 +69,3 @@ class DataUtils {
     }).last;
   }
 }
-종류별 통계 데
