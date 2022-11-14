@@ -4,15 +4,26 @@ import 'card_title.dart';
 import 'main_card.dart';
 
 class HourlyCard extends StatelessWidget {
-  const HourlyCard({Key? key}) : super(key: key);
+  final Color darkColor;
+  final Color lightColor;
+
+  const HourlyCard({
+    Key? key,
+    required this.darkColor,
+    required this.lightColor,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MainCard(
+      backgroundColor: lightColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const CardTitle(title: '시간별 미세먼지'),
+          CardTitle(
+            title: '시간별 미세먼지',
+            backgroundColor: darkColor,
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 8.0,
