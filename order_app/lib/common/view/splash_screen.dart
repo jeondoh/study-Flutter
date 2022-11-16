@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:order_app/common/const/data.dart';
 import 'package:order_app/common/layout/default_layout.dart';
@@ -24,6 +25,23 @@ class _SplashScreenState extends State<SplashScreen> {
   void checkToken() async {
     final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
+
+    final dio = Dio();
+
+    try {
+      final resp = await dio.post(
+        'http://$ip/auth/token',
+        options: Options(
+          headers: {
+            'authorization': 'Bearer $refreshToken',
+          },
+        ),
+      );
+      await storage.write(
+        key: ACCESS_TOKEN_KEY,
+        value: resp.data['accessToken'],
+      );
+    } catch (e) {}
 
     if (accessToken == null || refreshToken == null) {
       Navigator.of(context).pushAndRemoveUntil(

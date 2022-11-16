@@ -27,13 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final dio = Dio();
 
-    // 애뮬레이터 로컬 IP
-    const emulatorIp = '10.0.2.2:3000';
-    // 시뮬레이터 로컬 IP
-    const simulatorIp = '10.10.100.26:3000';
-    // 로컬 IP
-    final ip = Platform.isIOS ? simulatorIp : emulatorIp;
-
     return DefaultLayout(
       child: SingleChildScrollView(
         // 스크롤시 키보드 제거
