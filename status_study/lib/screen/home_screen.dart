@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../layout/default_layout.dart';
+import 'family_modifier_screen.dart';
 import 'future_provider_screen.dart';
 import 'state_notifier_provider_screen.dart';
 import 'state_provider_screen.dart';
@@ -54,6 +55,16 @@ class HomeScreen extends StatelessWidget {
               );
             },
             child: const Text('StreamProviderScreen'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const FamilyModifierScreen(),
+                ),
+              );
+            },
+            child: const Text('FamilyModifierScreen'),
           ),
         ],
       ),
