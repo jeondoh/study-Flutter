@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:order_app/common/model/model_with_id.dart';
 import 'package:order_app/user/model/user_model.dart';
 
 import '../../common/utils/utils.dart';
@@ -6,7 +7,8 @@ import '../../common/utils/utils.dart';
 part 'rating_model.g.dart';
 
 @JsonSerializable()
-class RatingModel {
+class RatingModel implements IModelWithId {
+  @override
   final String id;
   final UserModel user;
   final int rating;
