@@ -4,7 +4,10 @@ import 'package:order_app/common/layout/default_layout.dart';
 import 'package:order_app/product/component/product_card.dart';
 import 'package:order_app/restaurant/component/restaurant_card.dart';
 import 'package:order_app/restaurant/model/restaurant_detail_model.dart';
+import 'package:order_app/restaurant/provider/restaurant_provider.dart';
 import 'package:order_app/restaurant/repository/restaurant_repository.dart';
+
+import '../model/restaurant_model.dart';
 
 class RestaurantDetailScreen extends ConsumerWidget {
   final String id;
@@ -13,25 +16,24 @@ class RestaurantDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(restaurantDetailProvider(id));
+
+    if (state == null) {
+      return const DefaultLayout(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return DefaultLayout(
       title: '불타는 떡볶이',
-      child: FutureBuilder<RestaurantDetailModel>(
-        future:
-            ref.watch(restaurantRepositoryProvider).getRestaurantDetail(id: id),
-        builder: (_, AsyncSnapshot<RestaurantDetailModel> snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return CustomScrollView(
-            slivers: [
-              renderTop(model: snapshot.data!),
-              renderLabel(),
-              renderProducts(products: snapshot.data!.products),
-            ],
-          );
-        },
+      child: CustomScrollView(
+        slivers: [
+          renderTop(model: state),
+          // renderLabel(),
+          // renderProducts(products: snapshot.data!.products),
+        ],
       ),
     );
   }
@@ -72,7 +74,7 @@ class RestaurantDetailScreen extends ConsumerWidget {
   }
 
   SliverToBoxAdapter renderTop({
-    required RestaurantDetailModel model,
+    required RestaurantModel model,
   }) {
     return SliverToBoxAdapter(
       child: RestaurantCard.fromModel(
