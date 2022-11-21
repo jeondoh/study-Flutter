@@ -5,6 +5,7 @@ import 'auto_dispose_modifier_screen.dart';
 import 'family_modifier_screen.dart';
 import 'future_provider_screen.dart';
 import 'listen_provider_screen.dart';
+import 'provider_screen.dart';
 import 'select_provider_screen.dart';
 import 'state_notifier_provider_screen.dart';
 import 'state_provider_screen.dart';
@@ -98,6 +99,16 @@ class HomeScreen extends StatelessWidget {
               );
             },
             child: const Text('SelectProviderScreen'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const ProviderScreen(),
+                ),
+              );
+            },
+            child: const Text('ProviderScreen'),
           ),
         ],
       ),
