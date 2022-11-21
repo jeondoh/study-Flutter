@@ -1,25 +1,24 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:order_app/common/const/colors.dart';
 import 'package:order_app/common/const/data.dart';
 import 'package:order_app/common/layout/default_layout.dart';
+import 'package:order_app/common/secure_storage/secure_storage.dart';
 
 import '../../common/components/custom_text_form_field.dart';
 import '../../common/view/root_tab.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final storage = const FlutterSecureStorage();
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   String username = '';
   String password = '';
 
@@ -80,6 +79,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     final accessToken = resp.data['accessToken'];
                     final refreshToken = resp.data['refreshToken'];
+
+                    final storage = ref.read(secureStorageProvider);
+
                     await storage.write(
                       key: ACCESS_TOKEN_KEY,
                       value: accessToken,
