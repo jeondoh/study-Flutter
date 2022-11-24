@@ -26,35 +26,51 @@ final restaurantProvider =
 
 class RestaurantStateNotifier
     extends PaginationProvider<RestaurantModel, RestaurantRepository> {
-  RestaurantStateNotifier({required super.repository});
+  RestaurantStateNotifier({
+    required super.repository,
+  });
 
   void getDetail({
     required String id,
   }) async {
-    // 만일 아직 데이터가 하나도 없는 상태 (CursorPagination 아니라면)
-    // 데이터를 가져오는 시도를 함
+    // 만약에 아직 데이터가 하나도 없는 상태라면 (CursorPagination이 아니라면)
+    // 데이터를 가져오는 시도를 한다.
     if (state is! CursorPagination) {
-      await paginate();
+      await this.paginate();
     }
-    // state 가 CursorPagination 이 아닐때 null 반환
+
+    // state가 CursorPagination이 아닐때 그냥 리턴
     if (state is! CursorPagination) {
       return;
     }
+
     final pState = state as CursorPagination;
+
     final resp = await repository.getRestaurantDetail(id: id);
 
-    // 데이터가 없는 경우에는 캐시 끝에 데이터를 추가해버림
-    // ex) 리스트에서 id가 4번까지 있는데, 10번의 데이터를 요청하는 경우
+    // [RestaurantModel(1), RestaurantModel(2), RestaurantModel(3)]
+    // 요청 id: 10
+    // list.where((e) => e.id == 10)) 데이터 X
+    // 데이터가 없을때는 그냥 캐시의 끝에다가 데이터를 추가해버린다.
+    // [RestaurantModel(1), RestaurantModel(2), RestaurantModel(3),
+    // RestaurantDetailModel(10)]
     if (pState.data.where((e) => e.id == id).isEmpty) {
-      state = pState.copyWith(data: <RestaurantModel>[
-        ...pState.data,
-        resp,
-      ]);
+      state = pState.copyWith(
+        data: <RestaurantModel>[
+          ...pState.data,
+          resp,
+        ],
+      );
     } else {
-      // 이미 존재하는 데이터 가져오기
+      // [RestaurantModel(1), RestaurantModel(2), RestaurantModel(3)]
+      // id : 2인 친구를 Detail모델을 가져와라
+      // getDetail(id: 2);
+      // [RestaurantModel(1), RestaurantDetailModel(2), RestaurantModel(3)]
       state = pState.copyWith(
         data: pState.data
-            .map<RestaurantModel>((e) => e.id == id ? resp : e)
+            .map<RestaurantModel>(
+              (e) => e.id == id ? resp : e,
+            )
             .toList(),
       );
     }

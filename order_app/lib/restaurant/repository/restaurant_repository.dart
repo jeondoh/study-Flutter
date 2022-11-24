@@ -15,8 +15,10 @@ part 'restaurant_repository.g.dart';
 final restaurantRepositoryProvider = Provider<RestaurantRepository>(
   (ref) {
     final dio = ref.watch(dioProvider);
+
     final repository =
         RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant');
+
     return repository;
   },
 );
@@ -28,15 +30,21 @@ abstract class RestaurantRepository
   factory RestaurantRepository(Dio dio, {String baseUrl}) =
       _RestaurantRepository;
 
+  // http://$ip/restaurant/
   @GET('/')
-  @Headers({'accessToken': 'true'})
+  @Headers({
+    'accessToken': 'true',
+  })
   Future<CursorPagination<RestaurantModel>> paginate({
     @Queries() PaginationParams? paginationParams = const PaginationParams(),
   });
 
+  // http://$ip/restaurant/:id
   @GET('/{id}')
-  @Headers({'accessToken': 'true'})
+  @Headers({
+    'accessToken': 'true',
+  })
   Future<RestaurantDetailModel> getRestaurantDetail({
-    @Path('id') required String id,
+    @Path() required String id,
   });
 }
