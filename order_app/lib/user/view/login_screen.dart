@@ -1,17 +1,17 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:order_app/common/const/colors.dart';
 import 'package:order_app/common/const/data.dart';
 import 'package:order_app/common/layout/default_layout.dart';
-import 'package:order_app/common/secure_storage/secure_storage.dart';
+import 'package:order_app/user/provider/user_me_provider.dart';
 
 import '../../common/components/custom_text_form_field.dart';
-import '../../common/view/root_tab.dart';
+import '../model/user_model.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
+  static String get routeName => 'login';
+
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -25,6 +25,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final dio = Dio();
+    final state = ref.watch(userMeProvider);
 
     return DefaultLayout(
       child: SingleChildScrollView(
@@ -61,42 +62,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: () async {
-                    // ID:비밀번호
-                    final rawString = '$username:$password';
-                    // String 을 base64로 인코딩
-                    Codec<String, String> stringToBase64 = utf8.fuse(base64);
-                    String token = stringToBase64.encode(rawString);
-
-                    final resp = await dio.post(
-                      'http://$ip/auth/login',
-                      options: Options(
-                        headers: {
-                          'authorization': 'Basic $token',
+                  onPressed: state is UserModelLoading
+                      ? null
+                      : () async {
+                          ref.read(userMeProvider.notifier).login(
+                                username: username,
+                                password: password,
+                              );
                         },
-                      ),
-                    );
-
-                    final accessToken = resp.data['accessToken'];
-                    final refreshToken = resp.data['refreshToken'];
-
-                    final storage = ref.read(secureStorageProvider);
-
-                    await storage.write(
-                      key: ACCESS_TOKEN_KEY,
-                      value: accessToken,
-                    );
-                    await storage.write(
-                      key: REFRESH_TOKEN_KEY,
-                      value: refreshToken,
-                    );
-
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const RootTab(),
-                      ),
-                    );
-                  },
                   style: ElevatedButton.styleFrom(primary: PRIMARY_COLOR),
                   child: const Text('로그인'),
                 ),

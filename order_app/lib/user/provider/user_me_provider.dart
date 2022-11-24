@@ -1,10 +1,24 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:order_app/common/const/data.dart';
+import 'package:order_app/common/secure_storage/secure_storage.dart';
 import 'package:order_app/user/model/user_model.dart';
 import 'package:order_app/user/repository/auth_repository.dart';
 
 import '../repository/user_me_repository.dart';
+
+final userMeProvider =
+    StateNotifierProvider<UserMeStateNotifier, UserModelBase?>((ref) {
+  final authRepository = ref.watch(authRepositoryProvider);
+  final userMeRepository = ref.watch(userMeRepositoryProvider);
+  final storage = ref.watch(secureStorageProvider);
+
+  return UserMeStateNotifier(
+    authRepository: authRepository,
+    repository: userMeRepository,
+    storage: storage,
+  );
+});
 
 class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
   final AuthRepository authRepository;
@@ -55,7 +69,6 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
 
   Future<void> logout() async {
     state = null;
-
     // future 동시실행
     await Future.wait([
       storage.delete(key: REFRESH_TOKEN_KEY),

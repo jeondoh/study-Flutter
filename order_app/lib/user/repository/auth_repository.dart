@@ -1,7 +1,16 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:order_app/common/dio/dio.dart';
 import 'package:order_app/common/model/login_response.dart';
 import 'package:order_app/common/model/token_response.dart';
 import 'package:order_app/common/utils/utils.dart';
+
+import '../../common/const/data.dart';
+
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  final dio = ref.watch(dioProvider);
+  return AuthRepository(baseUrl: 'http://$ip/auth', dio: dio);
+});
 
 class AuthRepository {
   final String baseUrl;
@@ -21,7 +30,7 @@ class AuthRepository {
       '$baseUrl/login',
       options: Options(
         headers: {
-          'authorization': 'Bearer $serialized',
+          'authorization': 'Basic $serialized',
         },
       ),
     );

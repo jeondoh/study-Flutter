@@ -3,9 +3,12 @@ import 'package:order_app/common/layout/default_layout.dart';
 import 'package:order_app/product/view/product_screen.dart';
 
 import '../../restaurant/view/restaurant_screen.dart';
+import '../../user/view/profile_screen.dart';
 import '../const/colors.dart';
 
 class RootTab extends StatefulWidget {
+  static String get routeName => 'root';
+
   const RootTab({Key? key}) : super(key: key);
 
   @override
@@ -78,7 +81,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           const RestaurantScreen(),
           const ProductScreen(),
           Center(child: Container(child: Text('주문'))),
-          Center(child: Container(child: Text('프로필'))),
+          const ProfileScreen(),
         ],
       ),
     );
