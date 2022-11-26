@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:order_app/common/const/colors.dart';
 import 'package:order_app/common/layout/default_layout.dart';
 import 'package:order_app/user/provider/basket_provider.dart';
 
+import '../../order/provider/order_provider.dart';
+import '../../order/view/order_done_screen.dart';
 import '../../product/component/product_card.dart';
 
 class BasketScreen extends ConsumerWidget {
@@ -97,7 +100,17 @@ class BasketScreen extends ConsumerWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final resp =
+                            await ref.read(orderProvider.notifier).postOrder();
+                        if (resp) {
+                          context.goNamed(OrderDoneScreen.routeName);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('결제 실패!!')),
+                          );
+                        }
+                      },
                       style: ElevatedButton.styleFrom(primary: PRIMARY_COLOR),
                       child: const Text('결제하기'),
                     ),

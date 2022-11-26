@@ -27,8 +27,8 @@ Map<String, dynamic> _$PostOrderBodyToJson(PostOrderBody instance) =>
 PostOrderBodyProduct _$PostOrderBodyProductFromJson(
         Map<String, dynamic> json) =>
     PostOrderBodyProduct(
-      json['productId'] as String,
-      json['count'] as int,
+      productId: json['productId'] as String,
+      count: json['count'] as int,
     );
 
 Map<String, dynamic> _$PostOrderBodyProductToJson(
