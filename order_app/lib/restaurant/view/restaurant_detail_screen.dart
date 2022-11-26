@@ -55,7 +55,7 @@ class _RestaurantDetailScreenState
   Widget build(BuildContext context) {
     final state = ref.watch(restaurantDetailProvider(widget.id));
     final ratingsState = ref.watch(restaurantRatingProvider(widget.id));
-    final basket = ref.watch(basketProvier);
+    final basket = ref.watch(basketProvider);
 
     if (state == null) {
       return const DefaultLayout(
@@ -167,7 +167,7 @@ class _RestaurantDetailScreenState
 
             return InkWell(
               onTap: () {
-                ref.read(basketProvier.notifier).addToBasket(
+                ref.read(basketProvider.notifier).addToBasket(
                       product: ProductModel(
                         id: model.id,
                         name: model.name,

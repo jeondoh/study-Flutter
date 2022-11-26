@@ -5,7 +5,7 @@ import 'package:order_app/user/model/basket_item_model.dart';
 import 'package:order_app/user/model/patch_basket_body.dart';
 import 'package:order_app/user/repository/user_me_repository.dart';
 
-final basketProvier =
+final basketProvider =
     StateNotifierProvider<BasketProvider, List<BasketItemModel>>((ref) {
   final repository = ref.watch(userMeRepositoryProvider);
   return BasketProvider(repository: repository);

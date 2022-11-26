@@ -13,7 +13,7 @@ class BasketScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final basket = ref.watch(basketProvier);
+    final basket = ref.watch(basketProvider);
 
     if (basket.isEmpty) {
       return const DefaultLayout(
@@ -46,12 +46,12 @@ class BasketScreen extends ConsumerWidget {
                     return ProductCard.fromProductModel(
                       model: model.product,
                       onAdd: () {
-                        ref.read(basketProvier.notifier).addToBasket(
+                        ref.read(basketProvider.notifier).addToBasket(
                               product: model.product,
                             );
                       },
                       onSubtract: () {
-                        ref.read(basketProvier.notifier).removeFromBasket(
+                        ref.read(basketProvider.notifier).removeFromBasket(
                               product: model.product,
                             );
                       },
