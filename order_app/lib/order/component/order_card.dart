@@ -41,37 +41,38 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Text(
-              '${orderDate.year}.${orderDate.month.toString().padLeft(2, '0')}.${orderDate.day.toString().padLeft(2, '0')} 주문완료'),
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16.0),
-                child: image,
-              ),
-              const SizedBox(width: 16.0),
-              Column(
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(fontSize: 14.0),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+            '${orderDate.year}.${orderDate.month.toString().padLeft(2, '0')}.${orderDate.day.toString().padLeft(2, '0')} 주문완료'),
+        const SizedBox(height: 8.0),
+        Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16.0),
+              child: image,
+            ),
+            const SizedBox(width: 16.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontSize: 14.0),
+                ),
+                Text(
+                  '$productsDetail $price원',
+                  style: const TextStyle(
+                    color: BODY_TEXT_COLOR,
+                    fontWeight: FontWeight.w300,
                   ),
-                  Text(
-                    '$productsDetail $price원',
-                    style: const TextStyle(
-                      color: BODY_TEXT_COLOR,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  )
-                ],
-              )
-            ],
-          )
-        ],
-      ),
+                )
+              ],
+            )
+          ],
+        )
+      ],
     );
   }
 }
