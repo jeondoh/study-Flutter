@@ -1,11 +1,12 @@
 import 'package:collection/collection.dart';
+import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:order_app/product/model/product_model.dart';
 import 'package:order_app/user/model/basket_item_model.dart';
 import 'package:order_app/user/model/patch_basket_body.dart';
 import 'package:order_app/user/repository/user_me_repository.dart';
 
-final basketProvier =
+final basketProvider =
     StateNotifierProvider<BasketProvider, List<BasketItemModel>>((ref) {
   final repository = ref.watch(userMeRepositoryProvider);
   return BasketProvider(repository: repository);
@@ -13,8 +14,19 @@ final basketProvier =
 
 class BasketProvider extends StateNotifier<List<BasketItemModel>> {
   final UserMeRepository repository;
+  // debounce 적용
+  // 함수의 요청을 지정한 시간이 경과되고 1번만 실행
+  final updateBasketDebounce = Debouncer(
+    const Duration(seconds: 1),
+    initialValue: null,
+    checkEquality: false,
+  );
 
-  BasketProvider({required this.repository}) : super([]);
+  BasketProvider({required this.repository}) : super([]) {
+    updateBasketDebounce.values.listen((event) {
+      patchBasket();
+    });
+  }
 
   Future<void> patchBasket() async {
     await repository.patchBasket(
@@ -52,7 +64,10 @@ class BasketProvider extends StateNotifier<List<BasketItemModel>> {
     // Optimistic Response (긍정적 응답)
     // 응답이 성공할거라고 가정하고 상태를 먼저 업데이트함
     // 상태를 먼저 업데이트 함으로써 UX 적으로 앱이 빨라져 보이는 효과를 줄 수 있음
-    await patchBasket();
+
+    // debounce 적용
+    // await patchBasket();
+    updateBasketDebounce.setValue(null);
   }
 
   Future<void> removeFromBasket({
@@ -88,6 +103,8 @@ class BasketProvider extends StateNotifier<List<BasketItemModel>> {
               : e)
           .toList();
     }
-    await patchBasket();
+    // debounce 적용
+    // await patchBasket();
+    updateBasketDebounce.setValue(null);
   }
 }

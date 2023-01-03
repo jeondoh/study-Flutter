@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:order_app/common/layout/default_layout.dart';
+import 'package:order_app/order/view/order_screen.dart';
 import 'package:order_app/product/view/product_screen.dart';
 
 import '../../restaurant/view/restaurant_screen.dart';
@@ -77,11 +78,11 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         // tabBar 에서 스크롤 불가 설정
         physics: const NeverScrollableScrollPhysics(),
         controller: controller,
-        children: [
-          const RestaurantScreen(),
-          const ProductScreen(),
-          Center(child: Container(child: Text('주문'))),
-          const ProfileScreen(),
+        children: const [
+          RestaurantScreen(),
+          ProductScreen(),
+          OrderScreen(),
+          ProfileScreen(),
         ],
       ),
     );

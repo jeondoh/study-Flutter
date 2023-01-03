@@ -12,6 +12,8 @@ import 'package:order_app/user/model/user_model.dart';
 import 'package:order_app/user/provider/user_me_provider.dart';
 import 'package:order_app/user/view/login_screen.dart';
 
+import '../../order/view/order_done_screen.dart';
+
 final authProvider = ChangeNotifierProvider<AuthProvider>((ref) {
   return AuthProvider(ref: ref);
 });
@@ -46,6 +48,11 @@ class AuthProvider extends ChangeNotifier {
           path: '/basket',
           name: BasketScreen.routeName,
           builder: (_, state) => const BasketScreen(),
+        ),
+        GoRoute(
+          path: '/order_done',
+          name: OrderDoneScreen.routeName,
+          builder: (_, state) => const OrderDoneScreen(),
         ),
         GoRoute(
           path: '/splash',

@@ -69,7 +69,7 @@ class ProductCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final basket = ref.watch(basketProvier);
+    final basket = ref.watch(basketProvider);
 
     return Column(
       children: [
