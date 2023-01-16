@@ -11,7 +11,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  var _currentTab = TabItem.brunch;
+  TabItem _currentTab = TabItem.brunch;
 
   final _navigatorKeys = {
     TabItem.brunch: GlobalKey<NavigatorState>(),
