@@ -1,12 +1,9 @@
 // main.dart
 import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_lazy_loading/popup.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,16 +14,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PaintingBinding.instance.imageCache.clear();
-    PaintingBinding.instance.imageCache.clearLiveImages();
     return MaterialApp(
-      // Remove the debug banner
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
-      ),
-      home: const HomePage(),
-    );
+        // Remove the debug banner
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.lightBlue,
+        ),
+        home: const HomePage());
   }
 }
 
@@ -74,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                   child: GridView.builder(
                     itemCount: _posts.length,
                     controller: _controller,
-                    // cacheExtent: 500,
+                    cacheExtent: 500,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -96,33 +90,10 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               width: 200,
                               height: 200,
-                              // child: cachedImageNetwork(
-                              //   key: indexNumber,
-                              //   imgUrl:
-                              //       'http://10.10.100.107/res/resize/HanaTest4/HANA${indexNumber}.gif',
-                              //   onTap: () {
-                              //     Navigator.push(
-                              //       context,
-                              //       MaterialPageRoute(
-                              //         builder: (context) => const PopupUI(),
-                              //       ),
-                              //     );
-                              //   },
-                              // ),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const PopupUI(),
-                                    ),
-                                  );
-                                },
-                                child: Image.network(
-                                  'http://10.10.100.107/res/nft/HanaTest/HANA${indexNumber}.gif',
-                                  // 'http://10.10.100.107/res/resize/HanaTest1/HANA${indexNumber}.gif',
-                                  key: ValueKey(index),
-                                ),
+                              child: Image.network(
+                                // 'http://10.10.100.107/res/nft/HanaTest/HANA${indexNumber}.gif',
+                                'http://10.10.100.107/res/resize/HanaTest4/HANA${indexNumber}.gif',
+                                key: ValueKey(index),
                               ),
                             ),
                             ListTile(
@@ -211,34 +182,5 @@ class _HomePageState extends State<HomePage> {
         _isLoadMoreRunning = false;
       });
     }
-  }
-
-  static GestureDetector cachedImageNetwork({
-    required String imgUrl,
-    required String key,
-    GestureTapCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: CachedNetworkImage(
-        fit: BoxFit.cover,
-        imageUrl: imgUrl,
-        width: 200,
-        height: 200,
-        cacheManager: CacheManager(
-          Config(
-            key,
-            repo: JsonCacheInfoRepository(databaseName: 'cacheName'),
-            stalePeriod: const Duration(seconds: 10),
-            maxNrOfCacheObjects: 10,
-          ),
-        ),
-        placeholder: (context, url) => const Center(
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      ),
-    );
   }
 }

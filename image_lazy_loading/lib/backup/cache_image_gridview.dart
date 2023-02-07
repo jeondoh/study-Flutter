@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_lazy_loading/popup.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,8 +16,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PaintingBinding.instance.imageCache.clear();
-    PaintingBinding.instance.imageCache.clearLiveImages();
     return MaterialApp(
       // Remove the debug banner
       debugShowCheckedModeBanner: false,
@@ -74,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                   child: GridView.builder(
                     itemCount: _posts.length,
                     controller: _controller,
-                    // cacheExtent: 500,
+                    cacheExtent: 500,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -96,34 +93,16 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               width: 200,
                               height: 200,
-                              // child: cachedImageNetwork(
-                              //   key: indexNumber,
-                              //   imgUrl:
-                              //       'http://10.10.100.107/res/resize/HanaTest4/HANA${indexNumber}.gif',
-                              //   onTap: () {
-                              //     Navigator.push(
-                              //       context,
-                              //       MaterialPageRoute(
-                              //         builder: (context) => const PopupUI(),
-                              //       ),
-                              //     );
-                              //   },
-                              // ),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const PopupUI(),
-                                    ),
-                                  );
-                                },
-                                child: Image.network(
-                                  'http://10.10.100.107/res/nft/HanaTest/HANA${indexNumber}.gif',
-                                  // 'http://10.10.100.107/res/resize/HanaTest1/HANA${indexNumber}.gif',
-                                  key: ValueKey(index),
-                                ),
+                              child: cachedImageNetwork(
+                                key: indexNumber,
+                                imgUrl:
+                                    'http://10.10.100.107/res/resize/HanaTest4/HANA${indexNumber}.gif',
                               ),
+                              // child: Image.network(
+                              //   // 'http://10.10.100.107/res/nft/HanaTest/HANA${indexNumber}.gif',
+                              //   'http://10.10.100.107/res/resize/HanaTest4/HANA${indexNumber}.gif',
+                              //   key: ValueKey(index),
+                              // ),
                             ),
                             ListTile(
                               title: Text(_posts[index]['title']),
@@ -228,16 +207,17 @@ class _HomePageState extends State<HomePage> {
         cacheManager: CacheManager(
           Config(
             key,
-            repo: JsonCacheInfoRepository(databaseName: 'cacheName'),
             stalePeriod: const Duration(seconds: 10),
-            maxNrOfCacheObjects: 10,
+            maxNrOfCacheObjects: 50,
           ),
         ),
-        placeholder: (context, url) => const Center(
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
+        progressIndicatorBuilder: (context, url, downloadProgress) =>
+            CircularProgressIndicator(value: downloadProgress.progress),
+        // placeholder: (context, url) => const Center(
+        //   child: Center(
+        //     child: CircularProgressIndicator(),
+        //   ),
+        // ),
       ),
     );
   }
