@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ecommerce_app/src/constants/test_products.dart';
 import 'package:ecommerce_app/src/features/products/domain/product.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,17 +36,20 @@ final productRepositoryProvider = Provider<FakeProductsRepository>((ref) {
   return FakeProductsRepository();
 });
 
-final productListStreamProvider = StreamProvider<List<Product>>((ref) {
+final productListStreamProvider =
+    StreamProvider.autoDispose<List<Product>>((ref) {
   final productsRepository = ref.watch(productRepositoryProvider);
   return productsRepository.watchProductsList();
 });
 
-final productListFutureProvider = FutureProvider<List<Product>>((ref) {
+final productListFutureProvider =
+    FutureProvider.autoDispose<List<Product>>((ref) {
   final productsRepository = ref.watch(productRepositoryProvider);
   return productsRepository.fetchProductsList();
 });
 
-final productProvider = StreamProvider.family<Product?, String>((ref, id) {
+final productProvider =
+    StreamProvider.autoDispose.family<Product?, String>((ref, id) {
   final productsRepository = ref.watch(productRepositoryProvider);
   return productsRepository.watchProduct(id);
 });
