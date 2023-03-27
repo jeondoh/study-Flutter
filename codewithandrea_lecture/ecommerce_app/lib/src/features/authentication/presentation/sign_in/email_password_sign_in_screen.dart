@@ -1,12 +1,12 @@
+import 'package:ecommerce_app/src/common_widgets/custom_text_button.dart';
+import 'package:ecommerce_app/src/common_widgets/primary_button.dart';
+import 'package:ecommerce_app/src/common_widgets/responsive_scrollable_card.dart';
+import 'package:ecommerce_app/src/constants/app_sizes.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/string_validators.dart';
 import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ecommerce_app/src/common_widgets/custom_text_button.dart';
-import 'package:ecommerce_app/src/common_widgets/primary_button.dart';
-import 'package:ecommerce_app/src/common_widgets/responsive_scrollable_card.dart';
-import 'package:ecommerce_app/src/constants/app_sizes.dart';
 
 /// Email & password sign in screen.
 /// Wraps the [EmailPasswordSignInContents] widget below with a [Scaffold] and
@@ -65,8 +65,7 @@ class _EmailPasswordSignInContentsState
   // https://codewithandrea.com/articles/flutter-text-field-form-validation/
   var _submitted = false;
   // local variable representing the form type and loading state
-  late var _state =
-      EmailPasswordSignInState(formType: widget.formType, isLoading: false);
+  late var _state = EmailPasswordSignInState(formType: widget.formType);
 
   @override
   void dispose() {

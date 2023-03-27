@@ -1,5 +1,6 @@
 import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/string_validators.dart';
 import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Form type for email & password authentication
 enum EmailPasswordSignInFormType { signIn, register }
@@ -17,40 +18,55 @@ mixin EmailAndPasswordValidators {
 class EmailPasswordSignInState with EmailAndPasswordValidators {
   EmailPasswordSignInState({
     this.formType = EmailPasswordSignInFormType.signIn,
-    this.isLoading = false,
+    this.value = const AsyncValue.data(null),
   });
 
   final EmailPasswordSignInFormType formType;
-  final bool isLoading;
+  final AsyncValue<void> value;
 
-  EmailPasswordSignInState copyWith({
-    EmailPasswordSignInFormType? formType,
-    bool? isLoading,
-  }) {
-    return EmailPasswordSignInState(
-      formType: formType ?? this.formType,
-      isLoading: isLoading ?? this.isLoading,
-    );
-  }
+  bool get isLoading => value.isLoading;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EmailPasswordSignInState &&
+          runtimeType == other.runtimeType &&
+          formType == other.formType &&
+          value == other.value);
+
+  @override
+  int get hashCode => formType.hashCode ^ value.hashCode;
 
   @override
   String toString() {
-    return 'EmailPasswordSignInState(formType: $formType, isLoading: $isLoading)';
+    return 'EmailPasswordSignInState{ formType: $formType, value: $value,}';
   }
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is EmailPasswordSignInState &&
-        other.formType == formType &&
-        other.isLoading == isLoading;
+  EmailPasswordSignInState copyWith({
+    EmailPasswordSignInFormType? formType,
+    AsyncValue<void>? value,
+  }) {
+    return EmailPasswordSignInState(
+      formType: formType ?? this.formType,
+      value: value ?? this.value,
+    );
   }
 
-  @override
-  int get hashCode {
-    return formType.hashCode ^ isLoading.hashCode;
+  Map<String, dynamic> toMap() {
+    return {
+      'formType': formType,
+      'value': value,
+    };
   }
+
+  factory EmailPasswordSignInState.fromMap(Map<String, dynamic> map) {
+    return EmailPasswordSignInState(
+      formType: map['formType'] as EmailPasswordSignInFormType,
+      value: map['value'] as AsyncValue<void>,
+    );
+  }
+
+//</editor-fold>
 }
 
 extension EmailPasswordSignInStateX on EmailPasswordSignInState {
