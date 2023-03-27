@@ -2,8 +2,8 @@ import 'package:ecommerce_app/src/common_widgets/action_text_button.dart';
 import 'package:ecommerce_app/src/common_widgets/alert_dialogs.dart';
 import 'package:ecommerce_app/src/common_widgets/responsive_center.dart';
 import 'package:ecommerce_app/src/constants/app_sizes.dart';
-import 'package:ecommerce_app/src/features/authentication/data/fake_auth_repository.dart';
 import 'package:ecommerce_app/src/features/authentication/domain/app_user.dart';
+import 'package:ecommerce_app/src/features/authentication/presentation/account/account_screen_controller.dart';
 import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,26 +14,48 @@ class AccountScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AsyncValue<void>>(
+      accountScreenControllerProvider,
+      (previousState, state) {
+        if (!state.isLoading && state.hasError) {
+          showExceptionAlertDialog(
+            context: context,
+            title: 'Error'.hardcoded,
+            exception: state.error,
+          );
+        }
+      },
+    );
+    final state = ref.watch(accountScreenControllerProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Account'.hardcoded),
+        title: state.isLoading
+            ? const CircularProgressIndicator()
+            : Text('Account'.hardcoded),
         actions: [
           ActionTextButton(
             text: 'Logout'.hardcoded,
-            onPressed: () async {
-              // get the navigator before the async gap
-              final navigator = Navigator.of(context);
-              final logout = await showAlertDialog(
-                context: context,
-                title: 'Are you sure?'.hardcoded,
-                cancelActionText: 'Cancel'.hardcoded,
-                defaultActionText: 'Logout'.hardcoded,
-              );
-              if (logout == true) {
-                await ref.read(authRepositoryProvider).signOut();
-                navigator.pop();
-              }
-            },
+            onPressed: state.isLoading
+                ? null
+                : () async {
+                    // get the navigator before the async gap
+                    final navigator = Navigator.of(context);
+                    final logout = await showAlertDialog(
+                      context: context,
+                      title: 'Are you sure?'.hardcoded,
+                      cancelActionText: 'Cancel'.hardcoded,
+                      defaultActionText: 'Logout'.hardcoded,
+                    );
+                    if (logout == true) {
+                      final success = await ref
+                          .read(accountScreenControllerProvider.notifier)
+                          .signOut();
+                      if (success) {
+                        navigator.pop();
+                      }
+                    }
+                  },
           ),
         ],
       ),
