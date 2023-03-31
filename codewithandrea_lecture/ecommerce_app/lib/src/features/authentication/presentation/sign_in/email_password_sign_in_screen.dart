@@ -1,15 +1,16 @@
 import 'package:ecommerce_app/src/common_widgets/custom_text_button.dart';
 import 'package:ecommerce_app/src/common_widgets/primary_button.dart';
 import 'package:ecommerce_app/src/common_widgets/responsive_scrollable_card.dart';
-import 'package:ecommerce_app/src/common_widgets/responsive_scrollable_card.dart';
-import 'package:ecommerce_app/src/constants/app_sizes.dart';
 import 'package:ecommerce_app/src/constants/app_sizes.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/string_validators.dart';
 import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
+import 'package:ecommerce_app/src/utils/async_value_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/servicce_app/src/common_widgets/primary_button.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'email_password_sign_in_controller.dart';
 
 /// Email & password sign in screen.
 /// Wraps the [EmailPasswordSignInContents] widget below with a [Scaffold] and
