@@ -17,6 +17,9 @@ class PaymentPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen<double>(cartTotalProvider, (_, cartTotal) {
+      // If the cart total becomes 0, it means that the order has been fullfilled
+      // because all the items have been removed from the cart.
+      // So we should go to the orders page.
       if (cartTotal == 0.0) {
         context.goNamed(AppRoute.orders.name);
       }
