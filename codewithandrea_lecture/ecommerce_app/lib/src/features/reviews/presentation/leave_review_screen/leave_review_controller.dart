@@ -9,8 +9,8 @@ class LeaveReviewController extends StateNotifier<AsyncValue<void>> {
     required this.reviewsService,
     required this.currentDateBuilder,
   }) : super(const AsyncData(null));
-
   final ReviewsService reviewsService;
+  // * this is injected so we can easily mock the date in the tests
   final DateTime Function() currentDateBuilder;
 
   Future<void> submitReview({
@@ -20,6 +20,7 @@ class LeaveReviewController extends StateNotifier<AsyncValue<void>> {
     required String comment,
     required void Function() onSuccess,
   }) async {
+    // * only submit if the rating is new or it has changed
     if (previousReview == null ||
         rating != previousReview.rating ||
         comment != previousReview.comment) {
@@ -29,10 +30,10 @@ class LeaveReviewController extends StateNotifier<AsyncValue<void>> {
         date: currentDateBuilder(),
       );
       state = const AsyncLoading();
-      final newState = await AsyncValue.guard(
-        () => reviewsService.submitReview(productId: productId, review: review),
-      );
+      final newState = await AsyncValue.guard(() =>
+          reviewsService.submitReview(productId: productId, review: review));
       if (mounted) {
+        // * only set the state if the controller hasn't been disposed
         state = newState;
         if (state.hasError == false) {
           onSuccess();
