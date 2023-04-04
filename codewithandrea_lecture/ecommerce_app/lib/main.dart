@@ -16,21 +16,20 @@ void main() async {
   // * Register error handlers. For more info, see:
   // * https://docs.flutter.dev/testing/errors
   registerErrorHandlers();
-
   final localCartRepository = await SembastCartRepository.makeDefault();
+  // * Create ProviderContainer with any required overrides
   final container = ProviderContainer(
     overrides: [
       localCartRepositoryProvider.overrideWithValue(localCartRepository),
     ],
   );
+  // * Initialize CartSyncService to start the listener
   container.read(cartSyncServiceProvider);
   // * Entry point of the app
-  runApp(
-    UncontrolledProviderScope(
-      container: container,
-      child: const MyApp(),
-    ),
-  );
+  runApp(UncontrolledProviderScope(
+    container: container,
+    child: const MyApp(),
+  ));
 }
 
 void registerErrorHandlers() {

@@ -27,28 +27,33 @@ class CartSyncService {
     });
   }
 
+  /// moves all items from the local to the remote cart taking into account the
+  /// available quantities
   Future<void> _moveItemsToRemoteCart(String uid) async {
     try {
+      // Get the local cart data
       final localCartRepository = ref.read(localCartRepositoryProvider);
       final localCart = await localCartRepository.fetchCart();
       if (localCart.items.isNotEmpty) {
+        // Get the remote cart data
         final remoteCartRepository = ref.read(remoteCartRepositoryProvider);
         final remoteCart = await remoteCartRepository.fetchCart(uid);
-        final localItemsToAdd = await _getLocalItemsToAdd(
-          localCart,
-          remoteCart,
-        );
-        final updateRemoteCart = remoteCart.addItems(localItemsToAdd);
-        await remoteCartRepository.setCart(uid, updateRemoteCart);
+        final localItemsToAdd =
+            await _getLocalItemsToAdd(localCart, remoteCart);
+        // Add all the local items to the remote cart
+        final updatedRemoteCart = remoteCart.addItems(localItemsToAdd);
+        // Write the updated remote cart data to the repository
+        await remoteCartRepository.setCart(uid, updatedRemoteCart);
+        // Remove all items from the local cart
         await localCartRepository.setCart(const Cart());
       }
-    } catch (e) {}
+    } catch (e) {
+      // TODO: Handle error and/or rethrow
+    }
   }
 
   Future<List<Item>> _getLocalItemsToAdd(
-    Cart localCart,
-    Cart remoteCart,
-  ) async {
+      Cart localCart, Cart remoteCart) async {
     // Get the list of products (needed to read the available quantities)
     final productsRepository = ref.read(productsRepositoryProvider);
     final products = await productsRepository.fetchProductsList();
@@ -67,10 +72,8 @@ class CartSyncService {
       );
       // if the capped quantity is > 0, add to the list of items to add
       if (cappedLocalQuantity > 0) {
-        localItemsToAdd.add(Item(
-          productId: productId,
-          quantity: cappedLocalQuantity,
-        ));
+        localItemsToAdd
+            .add(Item(productId: productId, quantity: cappedLocalQuantity));
       }
     }
     return localItemsToAdd;
