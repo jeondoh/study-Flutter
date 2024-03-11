@@ -1,18 +1,20 @@
-import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ecommerce_app/src/common_widgets/custom_text_button.dart';
 import 'package:ecommerce_app/src/common_widgets/primary_button.dart';
 import 'package:ecommerce_app/src/common_widgets/responsive_scrollable_card.dart';
 import 'package:ecommerce_app/src/constants/app_sizes.dart';
 import 'package:ecommerce_app/src/features/sign_in/email_password_sign_in_state.dart';
 import 'package:ecommerce_app/src/features/sign_in/string_validators.dart';
+import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 /// Email & password sign in screen.
 /// Wraps the [EmailPasswordSignInContents] widget below with a [Scaffold] and
 /// [AppBar] with a title.
 class EmailPasswordSignInScreen extends StatelessWidget {
   const EmailPasswordSignInScreen({super.key, required this.formType});
+
   final EmailPasswordSignInFormType formType;
 
   // * Keys for testing using find.byKey()
@@ -25,7 +27,7 @@ class EmailPasswordSignInScreen extends StatelessWidget {
       appBar: AppBar(title: Text('Sign In'.hardcoded)),
       body: EmailPasswordSignInContents(
         formType: formType,
-        onSignedIn: () => Navigator.of(context).pop(),
+        onSignedIn: () => context.pop(),
       ),
     );
   }
@@ -40,10 +42,12 @@ class EmailPasswordSignInContents extends StatefulWidget {
     this.onSignedIn,
     required this.formType,
   });
+
   final VoidCallback? onSignedIn;
 
   /// The default form type to use.
   final EmailPasswordSignInFormType formType;
+
   @override
   State<EmailPasswordSignInContents> createState() =>
       _EmailPasswordSignInContentsState();
@@ -57,6 +61,7 @@ class _EmailPasswordSignInContentsState
   final _passwordController = TextEditingController();
 
   String get email => _emailController.text;
+
   String get password => _passwordController.text;
 
   // local variable used to apply AutovalidateMode.onUserInteraction and show
@@ -64,6 +69,7 @@ class _EmailPasswordSignInContentsState
   // For more details on how this is implemented, see:
   // https://codewithandrea.com/articles/flutter-text-field-form-validation/
   var _submitted = false;
+
   // local variable representing the form type and loading state
   late var _state =
       EmailPasswordSignInState(formType: widget.formType, isLoading: false);

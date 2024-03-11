@@ -1,10 +1,11 @@
+import 'package:ecommerce_app/src/common_widgets/action_text_button.dart';
 import 'package:ecommerce_app/src/common_widgets/alert_dialogs.dart';
+import 'package:ecommerce_app/src/common_widgets/responsive_center.dart';
+import 'package:ecommerce_app/src/constants/app_sizes.dart';
 import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
 import 'package:ecommerce_app/src/models/app_user.dart';
 import 'package:flutter/material.dart';
-import 'package:ecommerce_app/src/common_widgets/action_text_button.dart';
-import 'package:ecommerce_app/src/common_widgets/responsive_center.dart';
-import 'package:ecommerce_app/src/constants/app_sizes.dart';
+import 'package:go_router/go_router.dart';
 
 /// Simple account screen showing some user info and a logout button.
 class AccountScreen extends StatelessWidget {
@@ -23,17 +24,17 @@ class AccountScreen extends StatelessWidget {
               // * Get the navigator beforehand to prevent this warning:
               // * Don't use 'BuildContext's across async gaps.
               // * More info here: https://youtu.be/bzWaMpD1LHY
-              // final navigator = Navigator.of(context);
-              // final logout = await showAlertDialog(
-              //   context: context,
-              //   title: 'Are you sure?'.hardcoded,
-              //   cancelActionText: 'Cancel'.hardcoded,
-              //   defaultActionText: 'Logout'.hardcoded,
-              // );
-              // if (logout == true) {
-              //   // TODO: Sign out the user.
-              //   navigator.pop();
-              // }
+              final goRouter = GoRouter.of(context);
+              final logout = await showAlertDialog(
+                context: context,
+                title: 'Are you sure?'.hardcoded,
+                cancelActionText: 'Cancel'.hardcoded,
+                defaultActionText: 'Logout'.hardcoded,
+              );
+              if (logout == true) {
+                // TODO: Sign out the user.
+                goRouter.pop();
+              }
             },
           ),
         ],
