@@ -5,6 +5,7 @@ import 'package:ecommerce_app/src/constants/app_sizes.dart';
 import 'package:ecommerce_app/src/features/authentication/domain/app_user.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/account/account_screen_controller.dart';
 import 'package:ecommerce_app/src/localization/string_hardcoded.dart';
+import 'package:ecommerce_app/src/utils/async_value_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,17 +16,9 @@ class AccountScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<AsyncValue<void>>(
+    ref.listen<AsyncValue>(
       accountScreenControllerProvider,
-      (previous, state) {
-        if (!state.isLoading && state.hasError) {
-          showExceptionAlertDialog(
-            context: context,
-            title: 'Error'.hardcoded,
-            exception: state.error,
-          );
-        }
-      },
+      (_, state) => state.showAlertDialogOnError(context),
     );
 
     final state = ref.watch(accountScreenControllerProvider);
