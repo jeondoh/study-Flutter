@@ -26,6 +26,7 @@ dev_dependencies:
   flutter_lints: 3.0.1
   riverpod_lint: 2.3.4
   custom_lint: 0.5.7
+  mocktail: 1.0.3
 
 # Custom app icon. For more info see: https://pub.dev/packages/flutter_launcher_icons
 flutter_icons:
