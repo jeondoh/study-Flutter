@@ -30,6 +30,14 @@ class Cart {
 
   @override
   String toString() => 'Cart(items: $items';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Cart && runtimeType == other.runtimeType && items == other.items;
+
+  @override
+  int get hashCode => items.hashCode;
 }
 
 extension CartItems on Cart {

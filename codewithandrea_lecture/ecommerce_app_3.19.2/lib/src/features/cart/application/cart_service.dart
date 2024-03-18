@@ -49,6 +49,6 @@ class CartService {
   }
 }
 
-final cartProvider = Provider<CartService>((ref) {
+final cartServiceProvider = Provider<CartService>((ref) {
   return CartService(ref);
 });
