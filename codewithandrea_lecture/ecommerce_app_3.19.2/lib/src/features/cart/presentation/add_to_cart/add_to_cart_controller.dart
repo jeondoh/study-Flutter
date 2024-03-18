@@ -26,7 +26,7 @@ class AddToCartController extends StateNotifier<AsyncValue<int>> {
   }
 }
 
-final addToCartControllerNotifier =
+final addToCartControllerProvider =
     StateNotifierProvider<AddToCartController, AsyncValue<int>>((ref) {
   return AddToCartController(
     cartService: ref.watch(cartServiceProvider),
