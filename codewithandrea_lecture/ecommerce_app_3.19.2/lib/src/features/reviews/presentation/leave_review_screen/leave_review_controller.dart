@@ -13,10 +13,13 @@ class LeaveReviewController extends StateNotifier<AsyncValue<void>> {
   final ReviewsService reviewsService;
   final DateTime Function() currentDateBuilder;
 
+  // BuildContext 는 인수로 전달 X
+  // 함수를 선언해서 함수를 전달받게 하고, 함수 구현부에 context사용
   Future<void> submitReview({
     required ProductID productId,
     required double rating,
     required String comment,
+    required void Function() onSuccess,
   }) async {
     final review = Review(
       rating: rating,
@@ -29,6 +32,10 @@ class LeaveReviewController extends StateNotifier<AsyncValue<void>> {
     );
     if (mounted) {
       state = newState;
+      if (state.hasError == false) {
+        // todo: dismiss page
+        onSuccess();
+      }
     }
   }
 }
