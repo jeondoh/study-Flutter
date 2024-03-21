@@ -102,6 +102,13 @@ final productProvider =
 
 final productsListSearchProvider = FutureProvider.autoDispose
     .family<List<Product>, String>((ref, query) async {
+  // keepalive = 모든 리스너가 제거되었을 때 상태를 처리하지 않도록 provider에게 지시
+  final link = ref.keepAlive();
+  // timer를 사용해 특정 시간 이후 상태 삭제 가능
+  Timer(const Duration(seconds: 5), () {
+    link.close();
+  });
+
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.searchProducts(query);
 });
