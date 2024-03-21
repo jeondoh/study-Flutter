@@ -44,11 +44,11 @@ class OrderHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // TODO: Inject currency formatter
-    final totalFormatted = kCurrencyFormatter.format(order.total);
-    // TODO: Inject date formatter
+    final totalFormatted =
+        ref.watch(currencyFormatterProvider).format(order.total);
     final dateFormatted =
         ref.read(dateFormatterProvider).format(order.orderDate);
+
     return Container(
       color: Colors.grey[200],
       padding: const EdgeInsets.all(Sizes.p16),
