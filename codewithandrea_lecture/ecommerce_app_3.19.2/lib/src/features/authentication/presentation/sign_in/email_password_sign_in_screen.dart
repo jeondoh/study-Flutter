@@ -2,7 +2,7 @@ import 'package:ecommerce_app/src/common_widgets/custom_text_button.dart';
 import 'package:ecommerce_app/src/common_widgets/primary_button.dart';
 import 'package:ecommerce_app/src/common_widgets/responsive_scrollable_card.dart';
 import 'package:ecommerce_app/src/constants/app_sizes.dart';
-import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/email_passowrd_sign_in_controller.dart';
+import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/email_password_sign_in_controller.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/email_password_sign_in_form_type.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/email_password_sign_in_validators.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/sign_in/string_validators.dart';

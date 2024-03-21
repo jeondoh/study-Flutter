@@ -4,7 +4,9 @@ import 'package:ecommerce_app/src/constants/test_products.dart';
 import 'package:ecommerce_app/src/features/products/domain/product.dart';
 import 'package:ecommerce_app/src/utils/delay.dart';
 import 'package:ecommerce_app/src/utils/in_memory_store.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'fake_products_repository.g.dart';
 
 class FakeProductsRepository {
   FakeProductsRepository({this.addDelay = true});
@@ -77,31 +79,35 @@ class FakeProductsRepository {
   }
 }
 
-final productsRepositoryProvider = Provider<FakeProductsRepository>((ref) {
+@riverpod
+FakeProductsRepository productsRepository(ProductsRepositoryRef ref) {
   // * Set addDelay to false for faster loading
   return FakeProductsRepository(addDelay: false);
-});
+}
 
-final productsListStreamProvider =
-    StreamProvider.autoDispose<List<Product>>((ref) {
+@riverpod
+Stream<List<Product>> productsListStream(ProductsListStreamRef ref) {
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.watchProductsList();
-});
+}
 
-final productsListFutureProvider =
-    FutureProvider.autoDispose<List<Product>>((ref) {
+@riverpod
+Future<List<Product>> productsListFuture(ProductsListFutureRef ref) {
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.fetchProductsList();
-});
+}
 
-final productProvider =
-    StreamProvider.autoDispose.family<Product?, String>((ref, id) {
+@riverpod
+Stream<Product?> product(ProductRef ref, ProductID id) {
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.watchProduct(id);
-});
+}
 
-final productsListSearchProvider = FutureProvider.autoDispose
-    .family<List<Product>, String>((ref, query) async {
+@riverpod
+Future<List<Product>> productsListSearch(
+  ProductsListSearchRef ref,
+  String query,
+) async {
   // keepalive = 모든 리스너가 제거되었을 때 상태를 처리하지 않도록 provider에게 지시
   final link = ref.keepAlive();
   // timer를 사용해 특정 시간 이후 상태 삭제 가능
@@ -111,4 +117,4 @@ final productsListSearchProvider = FutureProvider.autoDispose
 
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.searchProducts(query);
-});
+}
