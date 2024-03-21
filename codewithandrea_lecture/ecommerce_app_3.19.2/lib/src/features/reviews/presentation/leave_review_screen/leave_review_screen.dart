@@ -123,6 +123,7 @@ class _LeaveReviewFormState extends ConsumerState<LeaveReviewForm> {
               ? null
               : () async {
                   ref.read(leaveReviewControllerProvider.notifier).submitReview(
+                        previousReview: widget.review,
                         productId: widget.productId,
                         rating: _rating,
                         comment: _controller.text,
