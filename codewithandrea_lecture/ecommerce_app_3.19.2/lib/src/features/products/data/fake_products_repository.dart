@@ -3,35 +3,69 @@ import 'dart:async';
 import 'package:ecommerce_app/src/constants/test_products.dart';
 import 'package:ecommerce_app/src/features/products/domain/product.dart';
 import 'package:ecommerce_app/src/utils/delay.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:ecommerce_app/src/utils/in_memory_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FakeProductsRepository {
   FakeProductsRepository({this.addDelay = true});
 
   final bool addDelay;
-  final List<Product> _products = kTestProducts;
+
+  /// Preload with the default list of products when the app starts
+  final _products = InMemoryStore<List<Product>>(List.from(kTestProducts));
 
   List<Product> getProductsList() {
-    return _products;
+    return _products.value;
   }
 
   Product? getProduct(String id) {
-    return _getProduct(_products, id);
+    return _getProduct(_products.value, id);
   }
 
   Future<List<Product>> fetchProductsList() async {
     await delay(addDelay);
-    return Future.value(_products);
+    return Future.value(_products.value);
   }
 
-  Stream<List<Product>> watchProductsList() async* {
-    await delay(addDelay);
-    yield _products;
+  Stream<List<Product>> watchProductsList() {
+    return _products.stream;
   }
 
   Stream<Product?> watchProduct(String id) {
-    return watchProductsList().map((products) => _getProduct(_products, id));
+    return watchProductsList().map((products) => _getProduct(products, id));
+  }
+
+  /// Update product or add a new one
+  Future<void> setProduct(Product product) async {
+    await delay(addDelay);
+    final products = _products.value;
+    final index = products.indexWhere((p) => p.id == product.id);
+    if (index == -1) {
+      // if not found, add as a new product
+      products.add(product);
+    } else {
+      // else, overwrite previous product
+      products[index] = product;
+    }
+    _products.value = products;
+  }
+
+  // search for products where the title contains the search query
+  Future<List<Product>> searchProducts(String query) async {
+    // client-side일 경우 적은 양의 데이터를 찾을때만 사용
+    // 이외 많은양의 데이터를 찾는다면 server-side 사용
+    assert(
+      _products.value.length <= 100,
+      'Client-side search should only be performed if the number of products is small. '
+      'Consider doing server-side search for larger datasets.',
+    );
+    // 전체 product 가져오기
+    final productsList = await fetchProductsList();
+    // match all products where the title contains the query
+    return productsList
+        .where((product) =>
+            product.title.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   static Product? _getProduct(List<Product> products, String id) {
@@ -44,32 +78,30 @@ class FakeProductsRepository {
 }
 
 final productsRepositoryProvider = Provider<FakeProductsRepository>((ref) {
-  return FakeProductsRepository();
+  // * Set addDelay to false for faster loading
+  return FakeProductsRepository(addDelay: false);
 });
 
 final productsListStreamProvider =
     StreamProvider.autoDispose<List<Product>>((ref) {
-  debugPrint('created productsListStreamProvider');
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.watchProductsList();
 });
 
-final productsListFutureProvider = FutureProvider<List<Product>>((ref) {
+final productsListFutureProvider =
+    FutureProvider.autoDispose<List<Product>>((ref) {
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.fetchProductsList();
 });
 
 final productProvider =
     StreamProvider.autoDispose.family<Product?, String>((ref, id) {
-  // 예시
-  // debugPrint('created productProvider with id: $id');
-  // ref.onDispose(() => debugPrint('disposed productProvider'));
-  // // provider가 더이상 사용하지 않을 때 활성 상태로 유지
-  // final link = ref.keepAlive();
-  // // 타이머를 사용해 x초 뒤 dispose
-  // Timer(const Duration(seconds: 10), () {
-  //   link.close();
-  // });
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.watchProduct(id);
+});
+
+final productsListSearchProvider = FutureProvider.autoDispose
+    .family<List<Product>, String>((ref, query) async {
+  final productsRepository = ref.watch(productsRepositoryProvider);
+  return productsRepository.searchProducts(query);
 });
